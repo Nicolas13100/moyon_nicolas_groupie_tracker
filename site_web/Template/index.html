@@ -1,0 +1,74 @@
+{{define "index"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#" id="home-link">
+                <img src="your-logo.png" alt="Home">
+            </a>
+            <input type="text" placeholder="Search...">
+            <ul>
+                <li class="dropdown">
+                    <a href="#">Dropdown 1</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Dropdown 2</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Dropdown 3</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Dropdown 4</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+            </ul>
+            <button>Login</button>
+        </nav>
+    </header>
+    {{if .}}
+        <h1>Family-Friendly Games with Rating Above 50</h1>
+
+        <ul>
+            {{range .}}
+                <li>
+                    <strong>{{.Name}}</strong><br>
+                    <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                    <span>ID: {{.ID}}</span><br>
+                    <span>Release Date: {{.FirstReleaseDateHuman}}</span><br>
+                    <span>Genres: {{join .GenresString ", "}}</span><br>
+                    
+                    <br><br>
+                </li>
+            {{end}}
+        </ul>
+    {{else}}
+        <p>No filtered games found.</p>
+    {{end}}
+</body>
+</html>
+{{end}}
