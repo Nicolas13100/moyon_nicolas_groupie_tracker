@@ -26,3 +26,7 @@ func RUN() {
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "index", nil)
 }
+
+func ErrorHandler(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "404", nil)
+}
