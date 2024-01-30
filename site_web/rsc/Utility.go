@@ -55,10 +55,11 @@ func fetchRecommendedGames() ([]Game, error) {
 	// theme 42 MUST be out , it's erotica theme
 	params := `
 	fields *;
-	where rating > 50;
-	sort rating desc;
 	where themes != 42;
+    where rating > 65;
 	limit 10;
+    sort rating desc;
+    where total_rating_count > 60;
 	`
 
 	// Make a POST request to the IGDB API with the parameters in the body
