@@ -231,3 +231,69 @@ footer {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.game-itemBot {
+    position: relative;
+    display: inline-block;
+    margin-right: 15px;
+}
+
+.game-itemBot img {
+    width: 100%;
+    height: auto;
+    display: block;
+    
+}
+
+.indexTextBot {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    box-sizing: border-box;
+    color: #fff;
+}
+
+.indexNameBot,
+.indexGenreBot {
+    margin: 0;
+}
+
+.indexNameBot {
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    padding-bottom: 5px;
+    max-height: 20px;
+    font-size: 19px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.indexGenreBot {
+    max-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.game-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Adjust as needed */
+}
+
+.game-itemBot {
+    flex: 0 1 calc(33.33% - 10px); /* Each item takes about one-third of the container width */
+    margin-bottom: 15px;
+}
+
+/* Larger fourth item */
+.game-itemBot:nth-child(4) {
+    flex-basis: calc(66.66% - 10px); /* This item is twice the width */
+}
+
+/* Fifth and sixth items under the third */
+.game-itemBot:nth-child(5),
+.game-itemBot:nth-child(6) {
+    flex-basis: calc(33.33% - 10px); /* Each item takes about one-third of the container width */
+}

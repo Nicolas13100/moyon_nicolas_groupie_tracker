@@ -60,8 +60,8 @@
     <section>
         <h1>Best Games</h1>
         <div class="indexTop">
-            {{if .}}
-            {{range .}}
+            {{if .RecommendedGames}}
+            {{range .RecommendedGames}}
             <div class="game-item">
                 <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
                 <div class="indexTextTop">
@@ -71,7 +71,26 @@
             </div>
             {{end}}
             {{else}}
-            <div>No filtered games found.</div>
+            <div>No Best games found.</div>
+            {{end}}
+        </div>
+
+        <h1>Latest Games</h1>
+        <div class="indexTop">
+            {{if .LastGames}}
+                <div class="game-items-container">
+                    {{range .LastGames}}
+                        <div class="game-itemBot">
+                            <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+                            <div class="indexTextBot">
+                                <div class="indexNameBot">{{.Name}}</div>
+                                <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                            </div>
+                        </div>
+                    {{end}}
+                </div>
+            {{else}}
+                <div>No Latest games found.</div>
             {{end}}
         </div>
     </section>
