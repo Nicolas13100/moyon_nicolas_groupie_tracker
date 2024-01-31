@@ -279,21 +279,31 @@ footer {
 .game-items-container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between; /* Adjust as needed */
 }
 
 .game-itemBot {
-    flex: 0 1 calc(33.33% - 10px); /* Each item takes about one-third of the container width */
+    width: 30%;
     margin-bottom: 15px;
 }
 
 /* Larger fourth item */
 .game-itemBot:nth-child(4) {
-    flex-basis: calc(66.66% - 10px); /* This item is twice the width */
+    width: calc(60% + 15px);
+    float: left;
 }
 
 /* Fifth and sixth items under the third */
 .game-itemBot:nth-child(5),
 .game-itemBot:nth-child(6) {
-    flex-basis: calc(33.33% - 10px); /* Each item takes about one-third of the container width */
+    width: 30%;
+    float: right; 
+    clear: none;
+}
+
+.indexBot{
+    list-style: none;
+    padding: 0;
+    display: flex;
+    margin-left: 5%;
+    width: fit-content;
 }
