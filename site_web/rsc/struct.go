@@ -26,6 +26,7 @@ type Game struct {
 	Platforms             []int  `json:"platforms"`
 	ReleaseDates          []int  `json:"release_dates"`
 	Screenshots           []int  `json:"screenshots"`
+	ScreenshotsLink       string
 	SimilarGames          []int  `json:"similar_games"`
 	Slug                  string `json:"slug"`
 	Summary               string `json:"summary"`
@@ -37,5 +38,7 @@ type Game struct {
 	Checksum              string `json:"checksum"`
 }
 
-type SentGame struct {
+type TemplateData struct {
+	RecommendedGames []Game
+	LastGames        []Game
 }

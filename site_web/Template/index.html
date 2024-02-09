@@ -1,16 +1,20 @@
 {{define "index"}}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/script.js"></script>
     <title>Main Page</title>
 </head>
+
 <body>
     <header>
         <nav>
-            <a href="#" id="home-link">
-                <img src="your-logo.png" alt="Home">
+            <a href="/home" id="home-link">
+                <img src="static/img/logo.png" alt="Home">
             </a>
             <input type="text" placeholder="Search...">
             <ul>
@@ -47,28 +51,52 @@
                     </div>
                 </li>
             </ul>
-            <button>Login</button>
+            <button>
+                <span> Login
+                </span>
+            </button>
         </nav>
     </header>
-    {{if .}}
-        <h1>Family-Friendly Games with Rating Above 50</h1>
-
-        <ul>
-            {{range .}}
-                <li>
-                    <strong>{{.Name}}</strong><br>
-                    <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
-                    <span>ID: {{.ID}}</span><br>
-                    <span>Release Date: {{.FirstReleaseDateHuman}}</span><br>
-                    <span>Genres: {{join .GenresString ", "}}</span><br>
-                    
-                    <br><br>
-                </li>
+    <section>
+        <h1>Best Games</h1>
+        <div class="indexTop">
+            {{if .RecommendedGames}}
+            {{range .RecommendedGames}}
+            <div class="game-item">
+                <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                <div class="indexTextTop">
+                    <div class="indexName">{{.Name}}</div>
+                    <div class="indexGenre">{{join .GenresString " "}}</div>
+                </div>
+            </div>
             {{end}}
-        </ul>
-    {{else}}
-        <p>No filtered games found.</p>
-    {{end}}
+            {{else}}
+            <div>No Best games found.</div>
+            {{end}}
+        </div>
+
+        <h1>Latest Games</h1>
+        <div class="indexBot">
+            {{if .LastGames}}
+                <div class="game-items-container">
+                    {{range .LastGames}}
+                        <div class="game-itemBot">
+                            <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+                            <div class="indexTextBot">
+                                <div class="indexNameBot">{{.Name}}</div>
+                                <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                            </div>
+                        </div>
+                    {{end}}
+                </div>
+            {{else}}
+                <div>No Latest games found.</div>
+            {{end}}
+        </div>
+    </section>
+    <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
+        Contribution Guidelines</footer>
 </body>
+
 </html>
 {{end}}

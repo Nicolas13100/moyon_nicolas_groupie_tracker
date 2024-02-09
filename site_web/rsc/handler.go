@@ -27,13 +27,23 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// Fetch recommended games from IGDB API
 	recommendedGames, err := fetchRecommendedGames()
 	if err != nil {
-		// Handle the error (e.g., log it, return an error response)
-		http.Error(w, "Failed to fetch recommended games", http.StatusInternalServerError)
+
+		fmt.Println("Failed to fetch recommended games", err)
 		return
 	}
+	// Fetch last added games from IGDB API
+	lastGame, err := fetchLastGames()
+	if err != nil {
 
+		fmt.Println("Failed to fetch recommended games", err)
+		return
+	}
+	data := TemplateData{
+		RecommendedGames: recommendedGames,
+		LastGames:        lastGame,
+	}
 	// Render the index template with the data
-	renderTemplate(w, "index", recommendedGames)
+	renderTemplate(w, "index", data)
 }
 
 func ErrorHandler(w http.ResponseWriter, r *http.Request) {

@@ -45,6 +45,7 @@ func fetchRecommendedGames() ([]Game, error) {
 	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
 	apiURL := "https://api.igdb.com/v4/games"
 	accessToken, err := GetTwitchOAuthToken()
+	// keep in mind that max number of token at same time is 25 , oldest one is deleted after
 	if err != nil {
 		fmt.Println("error token", err)
 		return nil, err
@@ -55,10 +56,9 @@ func fetchRecommendedGames() ([]Game, error) {
 	// theme 42 MUST be out , it's erotica theme
 	params := `
 	fields *;
-	where rating > 50;
-	sort rating desc;
-	where themes != 42;
-	limit 10;
+	where themes != 42 & rating > 65 & total_rating_count > 60;
+	limit 15;
+    sort rating desc;
 	`
 
 	// Make a POST request to the IGDB API with the parameters in the body
@@ -306,4 +306,149 @@ func formatUnixTimestampToFrenchDate(timestamp int64) string {
 	formattedDate := frenchTime.Format("02/01/2006")
 
 	return formattedDate
+}
+
+func fetchLastGames() ([]Game, error) {
+	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
+	apiURL := "https://api.igdb.com/v4/games"
+	accessToken, err := GetTwitchOAuthToken()
+	// keep in mind that max number of token at same time is 25 , oldest one is deleted after
+	if err != nil {
+		fmt.Println("error token", err)
+		return nil, err
+	}
+	if accessToken == "" {
+		fmt.Println("no token was given back")
+	}
+
+	// Get the current time in Unix time format
+	currentTime := time.Now().Unix()
+
+	// Convert Unix time to a string
+	timeString := fmt.Sprintf("%d", currentTime)
+
+	// theme 42 MUST be out , it's erotica theme
+	params := `
+	fields *;
+	where themes != 42 & first_release_date <` + timeString + ` ;
+	limit 6;
+	sort first_release_date desc;
+	`
+
+	// Make a POST request to the IGDB API with the parameters in the body
+	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("Client-ID", apiKey)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal the JSON response
+	var games []Game
+	err = json.Unmarshal(body, &games)
+	if err != nil {
+		return nil, err
+	}
+
+	// Populate struct for each game
+	for i := range games {
+		games[i].GenresString = make([]string, len(games[i].Genres))
+		for j, genreID := range games[i].Genres {
+			games[i].GenresString[j] = GetGenreNameByID(genreID)
+		}
+	}
+	// Populate struct for each game
+	for y := range games {
+		games[y].CoverLink = getCoverImageURL(games[y].Cover)
+		if len(games[y].Screenshots) > 0 {
+			games[y].ScreenshotsLink = getScreenshotsImageURL(games[y].Screenshots[0])
+		} else {
+			games[y].ScreenshotsLink = getScreenshotsImageURL(games[y].Cover)
+		}
+
+		games[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(games[y].FirstReleaseDate)
+	}
+
+	return games, nil
+}
+
+func getScreenshotsImageURL(gameID int) string { // copy past with light modification for screenshots
+	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
+	apiURL := "https://api.igdb.com/v4/screenshots"
+	accessToken, err := GetTwitchOAuthToken()
+	if err != nil {
+		fmt.Println("error token", err)
+		return ""
+	}
+	if accessToken == "" {
+		fmt.Println("no token was given back")
+	}
+
+	// Build the parameters for the API request
+	params := `
+    fields url;
+    where id =  ` + strconv.Itoa(gameID) + `;
+    `
+
+	// Make a POST request to the IGDB API with the parameters in the body
+	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("Client-ID", apiKey)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	// Unmarshal the JSON response
+	var covers []struct {
+		URL string `json:"url"`
+	}
+	err = json.Unmarshal(body, &covers)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	// Extract screenshots image URL
+	if len(covers) > 0 {
+		largeCoverURL := strings.Replace(covers[0].URL, "t_thumb", "t_cover_big", 1)
+		return "https:" + largeCoverURL
+	}
+	fmt.Println("no screenshots found")
+	return ""
+
 }
