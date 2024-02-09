@@ -276,34 +276,45 @@ footer {
     text-overflow: ellipsis;
 }
 
-.game-items-container {
-    display: flex;
-    flex-wrap: wrap;
-}
-
 .game-itemBot {
     width: 30%;
     margin-bottom: 15px;
 }
 
-/* Larger fourth item */
-.game-itemBot:nth-child(4) {
-    width: calc(60% + 15px);
-    float: left;
-}
 
-/* Fifth and sixth items under the third */
-.game-itemBot:nth-child(5),
-.game-itemBot:nth-child(6) {
-    width: 30%;
-    float: right; 
-    clear: none;
-}
-
-.indexBot{
-    list-style: none;
-    padding: 0;
+.indexBot {
     display: flex;
+    width: 100%; 
+    height: 100%; 
     margin-left: 5%;
-    width: fit-content;
+    margin-right: 5%;
+}
+
+.part1, .part2 {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+}
+
+.part1-2 {
+    display: flex;
+    flex: 1; 
+}
+
+.game1, .game2, .game3, .game4, .game5, .game6 {
+    flex: 1; 
+}
+
+.game3 {
+    flex: 2; 
+}
+
+.game1 img, .game2 img, .game3 img, .game4 img, .game5 img, .game6 img {
+    width: 30vw; 
+    height: auto; 
+}
+
+.game3 img {
+    width: calc(60vw + 15px); 
+    height: auto; 
 }

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style.css">
     <script src="static/script.js"></script>
+    <script src="static/script2.js"></script>
     <title>Main Page</title>
 </head>
 
@@ -77,9 +78,10 @@
 
         <h1>Latest Games</h1>
         <div class="indexBot">
-            {{if .LastGames}}
-                <div class="game-items-container">
-                    {{range .LastGames}}
+            <div class="part1">
+                <div class="part1-2">
+                    <div class="game1">
+                        {{with index .LastGames 0}}
                         <div class="game-itemBot">
                             <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
                             <div class="indexTextBot">
@@ -87,11 +89,67 @@
                                 <div class="indexGenreBot">{{join .GenresString " "}}</div>
                             </div>
                         </div>
+                        {{end}}
+                    </div>
+                    <div class="game2">
+                        {{with index .LastGames 1}}
+                        <div class="game-itemBot">
+                            <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+                            <div class="indexTextBot">
+                                <div class="indexNameBot">{{.Name}}</div>
+                                <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                            </div>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+                <div class="game3">
+                    {{with index .LastGames 2}}
+                    <div class="game-itemBot">
+                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+                        <div class="indexTextBot">
+                            <div class="indexNameBot">{{.Name}}</div>
+                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                        </div>
+                    </div>
                     {{end}}
                 </div>
-            {{else}}
-                <div>No Latest games found.</div>
-            {{end}}
+            </div>
+            <div class="part2">
+                <div class="game4">
+                    {{with index .LastGames 3}}
+                    <div class="game-itemBot">
+                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+                        <div class="indexTextBot">
+                            <div class="indexNameBot">{{.Name}}</div>
+                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                <div class="game5">
+                    {{with index .LastGames 4}}
+                    <div class="game-itemBot">
+                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+                        <div class="indexTextBot">
+                            <div class="indexNameBot">{{.Name}}</div>
+                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                <div class="game6">
+                    {{with index .LastGames 5}}
+                    <div class="game-itemBot">
+                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+                        <div class="indexTextBot">
+                            <div class="indexNameBot">{{.Name}}</div>
+                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
         </div>
     </section>
     <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -

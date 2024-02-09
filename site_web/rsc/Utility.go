@@ -378,8 +378,14 @@ func fetchLastGames() ([]Game, error) {
 		games[y].CoverLink = getCoverImageURL(games[y].Cover)
 		if len(games[y].Screenshots) > 0 {
 			games[y].ScreenshotsLink = getScreenshotsImageURL(games[y].Screenshots[0])
+			if games[y].ScreenshotsLink == "" {
+				games[y].ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
+			}
 		} else {
 			games[y].ScreenshotsLink = getScreenshotsImageURL(games[y].Cover)
+			if games[y].ScreenshotsLink == "" {
+				games[y].ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
+			}
 		}
 
 		games[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(games[y].FirstReleaseDate)
