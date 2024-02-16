@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var img3Height = game3Img.clientHeight;
 
         // Calculate half of the height of the image in game 3
-        var maxImgHeight = Math.floor(img3Height / 2);
+        var maxImgHeight = Math.floor((img3Height / 2)-7);
 
         // Set the max-height of all game images to be half the height of the image in game 3
         var gameImages = document.querySelectorAll('.game1 img, .game2 img, .game4 img, .game5 img, .game6 img');
