@@ -10,6 +10,7 @@ func RUN() {
 	// used same system than hangman, since it was working prety well
 	http.HandleFunc("/", ErrorHandler)
 	http.HandleFunc("/home", indexHandler)
+	http.HandleFunc("/game", gameHandler)
 
 	// Serve static files from the "site_web/static" directory << modified from hangman
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("site_web/static"))))
@@ -44,6 +45,19 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// Render the index template with the data
 	renderTemplate(w, "index", data)
+}
+
+func gameHandler(w http.ResponseWriter, r *http.Request) {
+	// Extract the ID from the query parameters
+	// Extract the ID from the query parameters
+	id := r.FormValue("id")
+	if id == "" {
+		fmt.Println("ID parameter is missing or empty on call to gameHandler")
+		return
+	}
+	data := fetchGame(id)
+	fmt.Println(data)
+	//renderTemplate(w, "game", data)
 }
 
 func ErrorHandler(w http.ResponseWriter, r *http.Request) {

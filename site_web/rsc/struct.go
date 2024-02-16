@@ -42,3 +42,54 @@ type TemplateData struct {
 	RecommendedGames []Game
 	LastGames        []Game
 }
+
+type GameFull struct {
+	ID                    int     `json:"id"`
+	AgeRatings            []int   `json:"age_ratings"`
+	AggregatedRating      float64 `json:"aggregated_rating"`
+	AggregatedRatingCount int     `json:"aggregated_rating_count"`
+	AlternativeNames      []int   `json:"alternative_names"`
+	Artworks              []int   `json:"artworks"`
+	Bundles               []int   `json:"bundles"`
+	Category              int     `json:"category"`
+	Cover                 int     `json:"cover"`
+	CoverLink             string
+	CreatedAt             int64 `json:"created_at"`
+	DLCs                  []int `json:"dlcs"`
+	Expansions            []int `json:"expansions"`
+	ExternalGames         []int `json:"external_games"`
+	FirstReleaseDate      int64 `json:"first_release_date"`
+	Follows               int   `json:"follows"`
+	Franchises            []int `json:"franchises"`
+	GameEngines           []int `json:"game_engines"`
+	GameModes             []int `json:"game_modes"`
+	Genres                []int `json:"genres"`
+	GenresString          []string
+	Hypes                 int     `json:"hypes"`
+	InvolvedCompanies     []int   `json:"involved_companies"`
+	Keywords              []int   `json:"keywords"`
+	Name                  string  `json:"name"`
+	Platforms             []int   `json:"platforms"`
+	PlayerPerspectives    []int   `json:"player_perspectives"`
+	Rating                float64 `json:"rating"`
+	RatingCount           int     `json:"rating_count"`
+	ReleaseDates          []int   `json:"release_dates"`
+	Screenshots           []int   `json:"screenshots"`
+	ScreenshotsLink       string
+	SimilarGames          []int   `json:"similar_games"`
+	Slug                  string  `json:"slug"`
+	Storyline             string  `json:"storyline"`
+	Summary               string  `json:"summary"`
+	Tags                  []int   `json:"tags"`
+	Themes                []int   `json:"themes"`
+	TotalRating           float64 `json:"total_rating"`
+	TotalRatingCount      int     `json:"total_rating_count"`
+	UpdatedAt             int64   `json:"updated_at"`
+	URL                   string  `json:"url"`
+	Videos                []int   `json:"videos"`
+	Websites              []int   `json:"websites"`
+	Checksum              string  `json:"checksum"`
+	LanguageSupports      []int   `json:"language_supports"`
+	GameLocalizations     []int   `json:"game_localizations"`
+	Collections           []int   `json:"collections"`
+}

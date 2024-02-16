@@ -458,3 +458,73 @@ func getScreenshotsImageURL(gameID int) string { // copy past with light modific
 	return ""
 
 }
+
+func fetchGame(id string) GameFull {
+	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
+	apiURL := "https://api.igdb.com/v4/games"
+	accessToken, err := GetTwitchOAuthToken()
+	// keep in mind that max number of token at same time is 25 , oldest one is deleted after
+	if err != nil {
+		fmt.Println("error token", err)
+		return GameFull{}
+	}
+	if accessToken == "" {
+		fmt.Println("no token was given back")
+		return GameFull{}
+	}
+
+	// theme 42 MUST be out , it's erotica theme
+	params := `
+	fields *;
+	where id =` + id
+
+	// Make a POST request to the IGDB API with the parameters in the body
+	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
+	if err != nil {
+		fmt.Println("error new request fetchgame", err)
+		return GameFull{}
+	}
+
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("Client-ID", apiKey)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("error do req", err)
+		return GameFull{}
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("error readAll", err)
+		return GameFull{}
+	}
+
+	// Unmarshal the JSON response
+	// Unmarshal the JSON response
+	var game GameFull
+	err = json.Unmarshal(body, &game)
+	if err != nil {
+		fmt.Println("error Unmarshal", err)
+		return GameFull{}
+	}
+	fmt.Println(game)
+	game.GenresString = make([]string, len(game.Genres))
+	for j, genreID := range game.Genres {
+		game.GenresString[j] = GetGenreNameByID(genreID)
+	}
+	game.CoverLink = getCoverImageURL(game.Cover)
+	if game.ScreenshotsLink == "" {
+		game.ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
+	}
+	game.ScreenshotsLink = getScreenshotsImageURL(game.Cover)
+	if game.ScreenshotsLink == "" {
+		game.ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
+	}
+	return game
+}
