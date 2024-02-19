@@ -59,6 +59,7 @@ type GameFull struct {
 	Expansions            []int `json:"expansions"`
 	ExternalGames         []int `json:"external_games"`
 	FirstReleaseDate      int64 `json:"first_release_date"`
+	FirstReleaseDateHuman string
 	Follows               int   `json:"follows"`
 	Franchises            []int `json:"franchises"`
 	GameEngines           []int `json:"game_engines"`

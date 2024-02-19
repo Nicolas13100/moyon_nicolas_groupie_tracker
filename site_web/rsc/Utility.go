@@ -504,27 +504,37 @@ func fetchGame(id string) GameFull {
 		fmt.Println("error readAll", err)
 		return GameFull{}
 	}
-
 	// Unmarshal the JSON response
-	// Unmarshal the JSON response
-	var game GameFull
+	var game []GameFull
 	err = json.Unmarshal(body, &game)
 	if err != nil {
 		fmt.Println("error Unmarshal", err)
 		return GameFull{}
 	}
 	fmt.Println(game)
-	game.GenresString = make([]string, len(game.Genres))
-	for j, genreID := range game.Genres {
-		game.GenresString[j] = GetGenreNameByID(genreID)
+	// Populate struct for each game
+	for i := range game {
+		game[i].GenresString = make([]string, len(game[i].Genres))
+		for j, genreID := range game[i].Genres {
+			game[i].GenresString[j] = GetGenreNameByID(genreID)
+		}
 	}
-	game.CoverLink = getCoverImageURL(game.Cover)
-	if game.ScreenshotsLink == "" {
-		game.ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
+	// Populate struct for each game
+	for y := range game {
+		game[y].CoverLink = getCoverImageURL(game[y].Cover)
+		if len(game[y].Screenshots) > 0 {
+			game[y].ScreenshotsLink = getScreenshotsImageURL(game[y].Screenshots[0])
+			if game[y].ScreenshotsLink == "" {
+				game[y].ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
+			}
+		} else {
+			game[y].ScreenshotsLink = getScreenshotsImageURL(game[y].Cover)
+			if game[y].ScreenshotsLink == "" {
+				game[y].ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
+			}
+		}
+
+		game[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(game[y].FirstReleaseDate)
 	}
-	game.ScreenshotsLink = getScreenshotsImageURL(game.Cover)
-	if game.ScreenshotsLink == "" {
-		game.ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
-	}
-	return game
+	return game[0]
 }
