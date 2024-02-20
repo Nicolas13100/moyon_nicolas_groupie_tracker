@@ -476,7 +476,7 @@ func fetchGame(id string) GameFull {
 	// theme 42 MUST be out , it's erotica theme
 	params := `
 	fields *;
-	where id =` + id
+	where id =` + id + `;`
 
 	// Make a POST request to the IGDB API with the parameters in the body
 	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
@@ -511,7 +511,6 @@ func fetchGame(id string) GameFull {
 		fmt.Println("error Unmarshal", err)
 		return GameFull{}
 	}
-	fmt.Println(game)
 	// Populate struct for each game
 	for i := range game {
 		game[i].GenresString = make([]string, len(game[i].Genres))

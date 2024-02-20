@@ -56,8 +56,8 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := fetchGame(id)
-	fmt.Println(data)
-	//renderTemplate(w, "game", data)
+
+	renderTemplate(w, "game", data)
 }
 
 func ErrorHandler(w http.ResponseWriter, r *http.Request) {
