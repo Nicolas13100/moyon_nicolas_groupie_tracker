@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style.css">
     <script src="static/script.js"></script>
-   
+
     <title>Main Page</title>
 </head>
 
@@ -63,13 +63,15 @@
         <div class="indexTop">
             {{if .RecommendedGames}}
             {{range .RecommendedGames}}
-            <div class="game-item">
-                <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
-                <div class="indexTextTop">
-                    <div class="indexName">{{.Name}}</div>
-                    <div class="indexGenre">{{join .GenresString " "}}</div>
+            <a href="/game?id={{.ID}}">
+                <div class="game-item">
+                    <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                    <div class="indexTextTop">
+                        <div class="indexName">{{.Name}}</div>
+                        <div class="indexGenre">{{join .GenresString " "}}</div>
+                    </div>
                 </div>
-            </div>
+            </a>
             {{end}}
             {{else}}
             <div>No Best games found.</div>
@@ -77,76 +79,72 @@
         </div>
 
         <h1>Latest Games</h1>
-        <div class="indexBot">
-            <div class="part1">
-                <div class="part1-2">
-                    <div class="game1">
-                        {{with index .LastGames 0}}
-                        <div class="game-itemBot">
-                            <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
-                            <div class="indexTextBot">
-                                <div class="indexNameBot">{{.Name}}</div>
-                                <div class="indexGenreBot">{{join .GenresString " "}}</div>
-                            </div>
-                        </div>
-                        {{end}}
-                    </div>
-                    <div class="game2">
-                        {{with index .LastGames 1}}
-                        <div class="game-itemBot">
-                            <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
-                            <div class="indexTextBot">
-                                <div class="indexNameBot">{{.Name}}</div>
-                                <div class="indexGenreBot">{{join .GenresString " "}}</div>
-                            </div>
-                        </div>
-                        {{end}}
-                    </div>
-                </div>
-                <div class="game3">
-                    {{with index .LastGames 2}}
-                    <div class="game-itemBot">
-                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+
+
+        <div class="ctn">
+            <div class="top-elems">
+                {{with index .LastGames 0}}
+                <a href="/game?id={{.ID}}">
+                    <div class="elem" style="background-image: url({{.ScreenshotsLink}});">
                         <div class="indexTextBot">
                             <div class="indexNameBot">{{.Name}}</div>
                             <div class="indexGenreBot">{{join .GenresString " "}}</div>
                         </div>
                     </div>
-                    {{end}}
-                </div>
+                </a>
+                {{end}}
+                {{with index .LastGames 1}}
+                <a href="/game?id={{.ID}}">
+                    <div class="elem" style="background-image: url({{.ScreenshotsLink}});">
+                        <div class="indexTextBot">
+                            <div class="indexNameBot">{{.Name}}</div>
+                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                        </div>
+                    </div>
+                </a>
+                {{end}}
+                {{with index .LastGames 2}}
+                <a href="/game?id={{.ID}}">
+                    <div class="elem" style="background-image: url({{.ScreenshotsLink}});">
+                        <div class="indexTextBot">
+                            <div class="indexNameBot">{{.Name}}</div>
+                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                        </div>
+                    </div>
+                </a>
+                {{end}}
             </div>
-            <div class="part2">
-                <div class="game4">
-                    {{with index .LastGames 3}}
-                    <div class="game-itemBot">
-                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
+            <div class="bottom-elems">
+                {{with index .LastGames 3}}
+                <a href="/game?id={{.ID}}">
+                    <div class="elem-big" style="background-image: url({{.ScreenshotsLink}});">
                         <div class="indexTextBot">
                             <div class="indexNameBot">{{.Name}}</div>
                             <div class="indexGenreBot">{{join .GenresString " "}}</div>
                         </div>
                     </div>
-                    {{end}}
-                </div>
-                <div class="game5">
+                </a>
+                {{end}}
+                <div class="right-col">
                     {{with index .LastGames 4}}
-                    <div class="game-itemBot">
-                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
-                        <div class="indexTextBot">
-                            <div class="indexNameBot">{{.Name}}</div>
-                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                    <a href="/game?id={{.ID}}">
+                        <div class="elem" style="background-image: url({{.ScreenshotsLink}});">
+                            <div class="indexTextBot">
+                                <div class="indexNameBot">{{.Name}}</div>
+                                <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                     {{end}}
-                </div>
-                <div class="game6">
                     {{with index .LastGames 5}}
-                    <div class="game-itemBot">
-                        <img src="{{.ScreenshotsLink}}" alt="{{.ScreenshotsLink}}">
-                        <div class="indexTextBot">
-                            <div class="indexNameBot">{{.Name}}</div>
-                            <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                    <a href="/game?id={{.ID}}">
+                        <div class="elem" style="background-image: url({{.ScreenshotsLink}});">
+                            <div class="indexTextBot">
+                                <div class="indexNameBot">{{.Name}}</div>
+                                <div class="indexGenreBot">{{join .GenresString " "}}</div>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                     {{end}}
                 </div>
             </div>
