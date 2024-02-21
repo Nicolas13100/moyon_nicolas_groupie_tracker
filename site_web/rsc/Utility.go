@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -101,7 +102,7 @@ func fetchRecommendedGames() ([]Game, error) {
 	}
 	// Populate struct for each game
 	for y := range games {
-		games[y].CoverLink = getCoverImageURL(games[y].Cover)
+		games[y].CoverLink = getSavedCoverImageURL(games[y].Cover)
 		games[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(games[y].FirstReleaseDate)
 	}
 
@@ -212,11 +213,47 @@ func initGenreMap() {
 	for _, genre := range genres {
 		GenreMap[genre.ID] = genre.Name
 	}
-
 }
 
 func Init() {
 	genreMapOnce.Do(initGenreMap)
+	savedData := map[string]string{
+		"0": "static/img/Picture_Not_Yet_Available.png",
+	}
+	if _, err := os.Stat("savedCover.json"); os.IsNotExist(err) {
+		file, err := os.Create("savedCover.json")
+		if err != nil {
+			fmt.Println("Error creating savedCover.json, please ensure it's properly here for quick page loading")
+		}
+		defer file.Close()
+		// Encode the data and write it to the file
+		encoder := json.NewEncoder(file)
+		err = encoder.Encode(savedData)
+		if err != nil {
+			fmt.Println("Error encoding data:", err)
+			return
+		}
+		fmt.Println("savedCover.json created and initialized successfully")
+	} else {
+		fmt.Println("savedCover.json already exists")
+	}
+	if _, err := os.Stat("savedScreenShot.json"); os.IsNotExist(err) {
+		file, err := os.Create("savedScreenShot.json")
+		if err != nil {
+			fmt.Println("Error creating savedScreenShot.json, please ensure it's properly here for quick page loading")
+		}
+		defer file.Close()
+		// Encode the data and write it to the file
+		encoder := json.NewEncoder(file)
+		err = encoder.Encode(savedData)
+		if err != nil {
+			fmt.Println("Error encoding data:", err)
+			return
+		}
+		fmt.Println("savedScreenShot.json created and initialized successfully")
+	} else {
+		fmt.Println("savedScreenShot.json already exists")
+	}
 }
 
 // GetGenreNameByID retrieves the genre name for a given genre ID
@@ -224,7 +261,7 @@ func GetGenreNameByID(genreID int) string {
 	return GenreMap[genreID]
 }
 
-func getCoverImageURL(gameID int) string {
+func getCoverImageURL(coverID int) string {
 	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
 	apiURL := "https://api.igdb.com/v4/covers"
 	accessToken, err := GetTwitchOAuthToken()
@@ -239,7 +276,7 @@ func getCoverImageURL(gameID int) string {
 	// Build the parameters for the API request
 	params := `
     fields url;
-    where id =  ` + strconv.Itoa(gameID) + `;
+    where id =  ` + strconv.Itoa(coverID) + `;
     `
 
 	// Make a POST request to the IGDB API with the parameters in the body
@@ -282,7 +319,12 @@ func getCoverImageURL(gameID int) string {
 	// Extract cover image URL
 	if len(covers) > 0 {
 		largeCoverURL := strings.Replace(covers[0].URL, "t_thumb", "t_cover_big", 1)
-		return "https:" + largeCoverURL
+		coverLink := "https:" + largeCoverURL
+		err := saveCoverImageURL(coverID, coverLink)
+		if err != nil {
+			fmt.Println("error saving Cover image", err)
+		}
+		return coverLink
 	}
 	fmt.Println("no cover found")
 	return ""
@@ -375,14 +417,14 @@ func fetchLastGames() ([]Game, error) {
 	}
 	// Populate struct for each game
 	for y := range games {
-		games[y].CoverLink = getCoverImageURL(games[y].Cover)
+		games[y].CoverLink = getSavedCoverImageURL(games[y].Cover)
 		if len(games[y].Screenshots) > 0 {
-			games[y].ScreenshotsLink = getScreenshotsImageURL(games[y].Screenshots[0])
+			games[y].ScreenshotsLink = getSavedScreenShotImageURL(games[y].Screenshots[0])
 			if games[y].ScreenshotsLink == "" {
 				games[y].ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
 			}
 		} else {
-			games[y].ScreenshotsLink = getScreenshotsImageURL(games[y].Cover)
+			games[y].ScreenshotsLink = getSavedScreenShotImageURL(games[y].Cover)
 			if games[y].ScreenshotsLink == "" {
 				games[y].ScreenshotsLink = "static/img/Picture_Not_Yet_Available.png"
 			}
@@ -394,7 +436,8 @@ func fetchLastGames() ([]Game, error) {
 	return games, nil
 }
 
-func getScreenshotsImageURL(gameID int) string { // copy past with light modification for screenshots
+func getScreenshotsImageURL(ScreenshotsID int) string { // copy past with light modification for screenshots
+
 	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
 	apiURL := "https://api.igdb.com/v4/screenshots"
 	accessToken, err := GetTwitchOAuthToken()
@@ -409,7 +452,7 @@ func getScreenshotsImageURL(gameID int) string { // copy past with light modific
 	// Build the parameters for the API request
 	params := `
     fields url;
-    where id =  ` + strconv.Itoa(gameID) + `;
+    where id =  ` + strconv.Itoa(ScreenshotsID) + `;
     `
 
 	// Make a POST request to the IGDB API with the parameters in the body
@@ -452,7 +495,12 @@ func getScreenshotsImageURL(gameID int) string { // copy past with light modific
 	// Extract screenshots image URL
 	if len(covers) > 0 {
 		largeCoverURL := strings.Replace(covers[0].URL, "t_thumb", "t_cover_big", 1)
-		return "https:" + largeCoverURL
+		screenshotsLink := "https:" + largeCoverURL
+		err := saveScreenShotsImageURL(ScreenshotsID, screenshotsLink)
+		if err != nil {
+			fmt.Println("error saving ScreenShots image", err)
+		}
+		return screenshotsLink
 	}
 	fmt.Println("no screenshots found")
 	return ""
@@ -520,7 +568,7 @@ func fetchGame(id string) GameFull {
 	}
 	// Populate struct for each game
 	for y := range game {
-		game[y].CoverLink = getCoverImageURL(game[y].Cover)
+		game[y].CoverLink = getSavedCoverImageURL(game[y].Cover)
 		if len(game[y].Screenshots) > 0 {
 			game[y].ScreenshotsLink = getScreenshotsImageURL(game[y].Screenshots[0])
 			if game[y].ScreenshotsLink == "" {
@@ -536,4 +584,150 @@ func fetchGame(id string) GameFull {
 		game[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(game[y].FirstReleaseDate)
 	}
 	return game[0]
+}
+
+func getSavedCoverImageURL(coverID int) string {
+	// Open the saved.json file
+	file, err := os.Open("savedCover.json")
+	if err != nil {
+		fmt.Println("error opening savedCover.json:", err)
+		return ""
+	}
+	defer file.Close()
+
+	// Decode the JSON data
+	var savedData map[string]string
+	if err := json.NewDecoder(file).Decode(&savedData); err != nil {
+		fmt.Println("error decoding savedCover.json:", err)
+		return ""
+	}
+
+	// Check if the gameID exists in the saved data
+	if coverURL, ok := savedData[strconv.Itoa(coverID)]; ok {
+		// If the coverURL is not the default placeholder URL, return it
+		if coverURL != "static/img/Picture_Not_Yet_Available.png" {
+			return coverURL
+		}
+	}
+
+	// If no matching cover URL found in saved data, continue with getCoverImageURL function
+	return getCoverImageURL(coverID)
+}
+
+func saveCoverImageURL(coverID int, coverURL string) error {
+	// Open the JSON file for reading and writing
+	file, err := os.OpenFile("savedCover.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Decode the existing JSON data into a map
+	var data map[int]string
+	err = json.NewDecoder(file).Decode(&data)
+	if err != nil && err != io.EOF {
+		return err
+	}
+
+	// Check if the cover ID already exists in the map
+	if _, ok := data[coverID]; ok {
+		// If the cover ID exists, replace the cover URL
+		data[coverID] = coverURL
+	} else {
+		// If the cover ID doesn't exist, add it to the map
+		data[coverID] = coverURL
+	}
+
+	// Move the file cursor to the beginning
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		return err
+	}
+
+	// Truncate the file (remove any extra data)
+	err = file.Truncate(0)
+	if err != nil {
+		return err
+	}
+
+	// Encode the updated map and write it back to the file
+	err = json.NewEncoder(file).Encode(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func getSavedScreenShotImageURL(ScreenshotsID int) string {
+	// Open the saved.json file
+	file, err := os.Open("savedScreenShot.json")
+	if err != nil {
+		fmt.Println("error opening savedScreenShot.json:", err)
+		return ""
+	}
+	defer file.Close()
+
+	// Decode the JSON data
+	var savedData map[string]string
+	if err := json.NewDecoder(file).Decode(&savedData); err != nil {
+		fmt.Println("error decoding savedScreenShot.json:", err)
+		return ""
+	}
+
+	// Check if the gameID exists in the saved data
+	if coverURL, ok := savedData[strconv.Itoa(ScreenshotsID)]; ok {
+		// If the coverURL is not the default placeholder URL, return it
+		if coverURL != "static/img/Picture_Not_Yet_Available.png" {
+			return coverURL
+		}
+	}
+
+	// If no matching cover URL found in saved data, continue with getCoverImageURL function
+	return getScreenshotsImageURL(ScreenshotsID)
+}
+
+func saveScreenShotsImageURL(ScreenshotsID int, ScreenshotsURL string) error {
+	// Open the JSON file for reading and writing
+	file, err := os.OpenFile("savedScreenShot.json", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Decode the existing JSON data into a map
+	var data map[int]string
+	err = json.NewDecoder(file).Decode(&data)
+	if err != nil && err != io.EOF {
+		return err
+	}
+
+	// Check if the Screenshots ID already exists in the map
+	if _, ok := data[ScreenshotsID]; ok {
+		// If the Screenshots ID exists, replace the Screenshots URL
+		data[ScreenshotsID] = ScreenshotsURL
+	} else {
+		// If the Screenshots ID doesn't exist, add it to the map
+		data[ScreenshotsID] = ScreenshotsURL
+	}
+
+	// Move the file cursor to the beginning
+	_, err = file.Seek(0, 0)
+	if err != nil {
+		return err
+	}
+
+	// Truncate the file (remove any extra data)
+	err = file.Truncate(0)
+	if err != nil {
+		return err
+	}
+
+	// Encode the updated map and write it back to the file
+	err = json.NewEncoder(file).Encode(data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
