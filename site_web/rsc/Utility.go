@@ -318,7 +318,7 @@ func getCoverImageURL(coverID int) string {
 
 	// Extract cover image URL
 	if len(covers) > 0 {
-		largeCoverURL := strings.Replace(covers[0].URL, "t_thumb", "t_cover_big2x", 1)
+		largeCoverURL := strings.Replace(covers[0].URL, "t_thumb", "t_cover_big_2x", 1)
 		coverLink := "https:" + largeCoverURL
 		err := saveCoverImageURL(coverID, coverLink)
 		if err != nil {
