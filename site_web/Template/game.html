@@ -6,8 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style1.css">
-    <script src="static/script.js"></script>
-    <script src="static/script2.js"></script>
+
     <title>Main Page</title>
 </head>
 
@@ -59,13 +58,40 @@
         </nav>
     </header>
     <section>
-<div class="top-image" style="background-image: url({{.ScreenshotsLink}});"></div>
-<div class="mid"></div>
-<div class="bottom-scroll"></div>
+        <div class="derriere">
+            <div class="abs">
+                <div class="img-abs" style="background-image: url({{.CoverLink}});"></div>
+                <div class="rating-ctn">
+                    <div class="rating-texte">
+                        {{if eq .Rating 0.0}}
+                        <div class="rating">N/A</div>
+                        {{else}}
+                        <div class="rating">{{.Rating}}% </div>
+                    {{end}}
+                    Rating</div>
+                    <div class="rating-texte">
+                    {{if eq .TotalRating 0.0}}
+                    <div class="rating">N/A</div>
+                    {{else}}
+                    <div class="rating">{{.TotalRating}}%</div>
+                    {{end}}
+                Total Rating</div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="background" style="background-image: url({{.ScreenshotsLink}});"></div>
+                <div class="titre">{{.Name}}</div>
+            </div>
+            <div class="texte-ctn">
+                <div class="genre">Genres: {{join .GenresString " "}}</div>
+                <div class="texte">{{.Summary}}</div>
+            </div>
+        </div>
     </section>
     <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
         Contribution Guidelines</footer>
 </body>
+<script src="static/script2.js"></script>
 
 </html>
 {{end}}
