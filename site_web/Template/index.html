@@ -52,7 +52,7 @@
                     </div>
                 </li>
             </ul>
-            <button>
+            <button id="loginButton">
                 <span> Login
                 </span>
             </button>
@@ -64,13 +64,14 @@
             {{if .RecommendedGames}}
             {{range .RecommendedGames}}
             <a href="/game?id={{.ID}}">
-            <div class="game-item">
-                <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
-                <div class="indexTextTop">
-                    <div class="indexName">{{.Name}}</div>
-                    <div class="indexGenre">{{join .GenresString " "}}</div>
+                <div class="game-item">
+                    <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                    <div class="indexTextTop">
+                        <div class="indexName">{{.Name}}</div>
+                        <div class="indexGenre">{{join .GenresString " "}}</div>
+                    </div>
                 </div>
-            </div></a>
+            </a>
             {{end}}
             {{else}}
             <div>No Best games found.</div>

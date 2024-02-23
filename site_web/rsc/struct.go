@@ -94,3 +94,13 @@ type GameFull struct {
 	GameLocalizations     []int   `json:"game_localizations"`
 	Collections           []int   `json:"collections"`
 }
+
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// UserData structure for individual user data
+type UserData struct {
+	Fav []int `json:"fav"`
+}

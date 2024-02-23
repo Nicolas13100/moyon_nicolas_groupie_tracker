@@ -29,3 +29,13 @@ document.addEventListener('DOMContentLoaded', function () {
         indexTop.scrollLeft = Math.max(0, Math.min(scrollLeft - walk, maxScrollLeft));
     });
 });
+document.addEventListener('DOMContentLoaded', function () {
+    // Get a reference to the login button
+    var loginButton = document.getElementById('loginButton');
+
+    // Add a click event listener to the login button
+    loginButton.addEventListener('click', function () {
+        // Redirect to the login page when the button is clicked
+        window.location.href = "/login";
+    });
+});

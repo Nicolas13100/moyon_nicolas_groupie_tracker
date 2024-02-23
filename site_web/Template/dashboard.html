@@ -1,0 +1,43 @@
+{{define "dashboard"}}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/statics/fav.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/CSS/style.css">
+    <script src="/static/JS/script.js"></script>
+    <title>Hangman Game - dashboard</title>
+</head>
+<body class="element">
+    <h1>Dashboard</h1>
+    <div class="container">
+
+    <div class="user">
+        <h3>User : {{.Name}} </h3>
+        <form action="/scoreboard" method="post">
+        <button type="submit">Show my score</button>
+        </form>
+        <form action="/globalscoreboard" method="post">
+        <button type="submit">Show all users scores</button>
+        </form>
+    </div>
+    
+    <div class="head">
+    <form action="/start" method="post">
+        <button type="submit">Start Hangman Game</button>
+    </form>
+    </div>
+
+    <div class="end">
+    <form action="/gestion" method="post">
+        <button type="submit">Modify account</button>
+    </form>
+    <form action="/logout" method="post">
+        <button type="submit" class="transitionButton">Logout</button>
+    </form>
+    </div>
+</div>
+</body>
+</html>
+{{end}}

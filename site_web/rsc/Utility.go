@@ -729,3 +729,72 @@ func saveScreenShotsImageURL(ScreenshotsID int, ScreenshotsURL string) error {
 
 	return nil
 }
+
+// Function to save user data to a file
+func SaveUserFavorit(username string, gameID int) error {
+	filename := username + ".json"
+	var userData UserData
+
+	// Open the file with read-write access or create if it doesn't exist
+	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Decode existing data from the file
+	stat, err := file.Stat()
+	if err != nil {
+		return err
+	}
+
+	if stat.Size() != 0 {
+		decoder := json.NewDecoder(file)
+		if err := decoder.Decode(&userData); err != nil {
+			return err
+		}
+	}
+
+	// Check if gameID already exists in Fav slice
+	index := findIndex(userData.Fav, gameID)
+	if index != -1 {
+		// If found, remove it from the slice
+		userData.Fav = removeElement(userData.Fav, index)
+	} else {
+		// If not found, append it to the slice
+		userData.Fav = append(userData.Fav, gameID)
+	}
+
+	// Seek to the beginning of the file before writing
+	if _, err := file.Seek(0, 0); err != nil {
+		return err
+	}
+
+	// Truncate the file before writing to ensure no leftover data
+	if err := file.Truncate(0); err != nil {
+		return err
+	}
+
+	// Encode and write the updated data back to the file
+	encoder := json.NewEncoder(file)
+	if err := encoder.Encode(userData); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Helper function to find index of an element in a slice
+func findIndex(slice []int, element int) int {
+	for i, v := range slice {
+		if v == element {
+			return i
+		}
+	}
+	return -1
+}
+
+// Helper function to remove an element from a slice
+func removeElement(slice []int, index int) []int {
+	return append(slice[:index], slice[index+1:]...)
+}

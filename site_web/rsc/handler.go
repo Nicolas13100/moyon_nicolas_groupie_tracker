@@ -12,6 +12,14 @@ func RUN() {
 	http.HandleFunc("/", ErrorHandler)
 	http.HandleFunc("/home", indexHandler)
 	http.HandleFunc("/game", gameHandler)
+	http.HandleFunc("/register", RegisterHandler)
+	http.HandleFunc("/confirmRegister", confirmRegisterHandler)
+	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/successLogin", successLoginHandler)
+	http.HandleFunc("/logout", logoutHandler)
+	http.HandleFunc("/dashboard", dashboardHandler)
+	http.HandleFunc("/gestion", gestionHandler)
+	http.HandleFunc("/changeLogin", changeLoginHandler)
 
 	// Serve static files from the "site_web/static" directory << modified from hangman
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("site_web/static"))))
