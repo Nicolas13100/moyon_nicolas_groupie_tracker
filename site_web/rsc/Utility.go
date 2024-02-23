@@ -92,7 +92,6 @@ func fetchRecommendedGames() ([]Game, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	// Populate struct for each game
 	for i := range games {
 		games[i].GenresString = make([]string, len(games[i].Genres))
@@ -105,7 +104,6 @@ func fetchRecommendedGames() ([]Game, error) {
 		games[y].CoverLink = getSavedCoverImageURL(games[y].Cover)
 		games[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(games[y].FirstReleaseDate)
 	}
-
 	return games, nil
 }
 

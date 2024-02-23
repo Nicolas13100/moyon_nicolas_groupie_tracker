@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 )
 
 func RUN() {
@@ -25,25 +26,42 @@ func RUN() {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	// Fetch recommended games from IGDB API
-	recommendedGames, err := fetchRecommendedGames()
-	if err != nil {
+	// Use Goroutines to fetch recommended and last added games concurrently
+	var recommendedGames []Game
+	var lastGame []Game
+	var wg sync.WaitGroup
+	wg.Add(2)
 
-		fmt.Println("Failed to fetch recommended games", err)
-		return
-	}
-	// Fetch last added games from IGDB API
-	lastGame, err := fetchLastGames()
-	if err != nil {
+	// Fetch recommended games concurrently
+	go func() {
+		defer wg.Done()
+		var err error
+		recommendedGames, err = fetchRecommendedGames()
+		if err != nil {
+			fmt.Println("Failed to fetch recommended games", err)
+		}
+	}()
 
-		fmt.Println("Failed to fetch recommended games", err)
-		return
-	}
+	// Fetch last added games concurrently
+	go func() {
+		defer wg.Done()
+		var err error
+		lastGame, err = fetchLastGames()
+		if err != nil {
+			fmt.Println("Failed to fetch last added games", err)
+		}
+	}()
+
+	// Wait for both Goroutines to finish
+	wg.Wait()
+	// Once data is fetched, use JavaScript to update the DOM and remove the loading indicator
+	fmt.Fprintf(w, "<script>document.getElementById('loading').remove();</script>")
+
+	// Render the index template with the data
 	data := TemplateData{
 		RecommendedGames: recommendedGames,
 		LastGames:        lastGame,
 	}
-	// Render the index template with the data
 	renderTemplate(w, "index", data)
 }
 

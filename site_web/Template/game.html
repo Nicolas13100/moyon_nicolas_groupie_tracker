@@ -67,15 +67,17 @@
                         <div class="rating">N/A</div>
                         {{else}}
                         <div class="rating">{{.Rating}}% </div>
-                    {{end}}
-                    Rating</div>
+                        {{end}}
+                        Rating
+                    </div>
                     <div class="rating-texte">
-                    {{if eq .TotalRating 0.0}}
-                    <div class="rating">N/A</div>
-                    {{else}}
-                    <div class="rating">{{.TotalRating}}%</div>
-                    {{end}}
-                Total Rating</div>
+                        {{if eq .TotalRating 0.0}}
+                        <div class="rating">N/A</div>
+                        {{else}}
+                        <div class="rating">{{.TotalRating}}%</div>
+                        {{end}}
+                        Total Rating
+                    </div>
                 </div>
             </div>
             <div class="container">
@@ -85,6 +87,20 @@
             <div class="texte-ctn">
                 <div class="genre">Genres: {{join .GenresString " "}}</div>
                 <div class="texte">{{.Summary}}</div>
+                <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" />
+                <label class="container2" for="favorite">
+                    <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
+                        stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                        </path>
+                    </svg>
+                    <div class="action">
+                        <span class="option-1">Add to Favorites</span>
+                        <span class="option-2">Added to Favorites</span>
+                    </div>
+                </label>
             </div>
         </div>
     </section>

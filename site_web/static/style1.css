@@ -141,7 +141,7 @@ button span {
 }
 
 section {
-    
+    min-height: 100vh;
     height: fit-content;
 }
 
@@ -174,14 +174,15 @@ footer {
 .container {
     position: relative;
     width: 100%;
-    height: 45vh;
-    overflow: hidden; /* Ensure blurred background doesn't overflow */
+    height: 35vh;
+    overflow: hidden;
+    /* Ensure blurred background doesn't overflow */
     display: flex;
     justify-content: center;
     align-items: flex-end;
-  }
-  
-  .background {
+}
+
+.background {
     position: absolute;
     top: 0;
     left: 0;
@@ -191,15 +192,17 @@ footer {
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-  }
-  
-  .titre {
+}
+
+.titre {
     position: relative;
-    z-index: 100; /* Ensure content appears above the blurred background */
+    z-index: 100;
+    /* Ensure content appears above the blurred background */
     padding: 20px;
-    color: white; /* Adjust text color as needed */
+    color: white;
+    /* Adjust text color as needed */
     font-size: large;
-  }
+}
 
 .abs {
     position: absolute;
@@ -220,17 +223,19 @@ footer {
     background-size: contain;
 }
 
-.texte-ctn{
+.texte-ctn {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1rem;
 }
-.genre{
+
+.genre {
     width: 40%;
+    margin-top: 2rem;
 }
 
-.texte{
+.texte {
     width: 40%;
 }
 
@@ -253,81 +258,161 @@ footer {
     --rating-color-good: #27ae60;
     --rating-color-meh: #f1c40f;
     --rating-color-bad: #e74c3c;
-  }
-  
-  /* Rating item */
-  .rating {
+}
+
+/* Rating item */
+.rating {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 100%;
     overflow: hidden;
-    
+
     background: var(--rating-color-default);
     color: var(--rating-color-default);
     width: var(--rating-size);
     height: var(--rating-size);
-  
+
     /* Basic style for the text */
     font-size: calc(var(--rating-size) / 3);
     line-height: 1;
-  }
-  
-  /* Rating circle content */
-  .rating span {
+}
+
+/* Rating circle content */
+.rating span {
     position: relative;
     display: flex;
     font-weight: bold;
     z-index: 2;
-  }
-  
-  .rating span small {
+}
+
+.rating span small {
     font-size: 0.5em;
     font-weight: 900;
     align-self: center;
-  }
-  
-  /* Bar mask, creates an inner circle with the same color as thee background */
-  .rating::after {
+}
+
+/* Bar mask, creates an inner circle with the same color as thee background */
+.rating::after {
     content: "";
     position: absolute;
     inset: var(--bar-size);
     background: var(--background-color);
     border-radius: inherit;
     z-index: 1;
-  }
-  
-  /* Bar background */
-  .rating::before {
+}
+
+/* Bar background */
+.rating::before {
     content: "";
     position: absolute;
     inset: var(--bar-size);
     border-radius: inherit;
     box-shadow: 0 0 0 1rem var(--rating-color-background);
     z-index: -1;
-  }
-  
-  /* Classes to give different colors to ratings, based on their score */
-  .rating.good {
+}
+
+/* Classes to give different colors to ratings, based on their score */
+.rating.good {
     background: var(--rating-color-good);
     color: var(--rating-color-good);
-  }
-  
-  .rating.meh {
+}
+
+.rating.meh {
     background: var(--rating-color-meh);
     color: var(--rating-color-meh);
-  }
-  
-  .rating.bad {
+}
+
+.rating.bad {
     background: var(--rating-color-bad);
     color: var(--rating-color-bad);
-  }
-  
-  .rating-texte{
+}
+
+.rating-texte {
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 10px;
 
-  }
+}
+
+.container2 {
+    background-color: rgb(36, 36, 36);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 15px 10px 10px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 10px;
+    box-shadow: rgba(46, 46, 46, 0.2) 0px 8px 24px;
+    color: rgb(255, 255, 255);
+    z-index: 2;
+}
+
+#favorite {
+    display: none;
+}
+
+#favorite:checked+.container2 svg {
+    fill: hsl(0deg 100% 50%);
+    stroke: hsl(0deg 100% 50%);
+    animation: heartButton 1s;
+}
+
+@keyframes heartButton {
+    0% {
+        transform: scale(1);
+    }
+
+    25% {
+        transform: scale(1.3);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+
+    75% {
+        transform: scale(1.3);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+#favorite+.container2 .action {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+}
+
+#favorite+.container2 .action span {
+    grid-column-start: 1;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    transition: all 0.5s;
+}
+
+#favorite+.container2 .action span.option-1 {
+    transform: translate(0px, 0%);
+    opacity: 1;
+}
+
+#favorite:checked+.container2 .action span.option-1 {
+    transform: translate(0px, -100%);
+    opacity: 0;
+}
+
+#favorite+.container2 .action span.option-2 {
+    transform: translate(0px, 100%);
+    opacity: 0;
+}
+
+#favorite:checked+.container2 .action span.option-2 {
+    transform: translate(0px, 0%);
+    opacity: 1;
+}
