@@ -1,85 +1,91 @@
 {{define "Login"}}
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="static/style1.css">
-  <title>Login</title>
+  <link rel="stylesheet" href="static/style.css">
+  <link rel="stylesheet" href="static/style2.css">
+  <title>Login Page</title>
 </head>
 <header>
   <nav>
-      <a href="/home" id="home-link">
-          <img src="static/img/logo.png" alt="Home">
-      </a>
-      <input type="text" placeholder="Search...">
-      <ul>
-          <li class="dropdown">
-              <a href="#">Dropdown 1</a>
-              <div class="dropdown-content">
-                  <a href="#">Item 1</a>
-                  <a href="#">Item 2</a>
-                  <a href="#">Item 3</a>
-              </div>
-          </li>
-          <li class="dropdown">
-              <a href="#">Dropdown 2</a>
-              <div class="dropdown-content">
-                  <a href="#">Item 1</a>
-                  <a href="#">Item 2</a>
-                  <a href="#">Item 3</a>
-              </div>
-          </li>
-          <li class="dropdown">
-              <a href="#">Dropdown 3</a>
-              <div class="dropdown-content">
-                  <a href="#">Item 1</a>
-                  <a href="#">Item 2</a>
-                  <a href="#">Item 3</a>
-              </div>
-          </li>
-          <li class="dropdown">
-              <a href="#">Dropdown 4</a>
-              <div class="dropdown-content">
-                  <a href="#">Item 1</a>
-                  <a href="#">Item 2</a>
-                  <a href="#">Item 3</a>
-              </div>
-          </li>
-      </ul>
-      {{if .Logged}}
-      <a class="h-link" href="/logout">
-          <button>
-              <span> Logout
-              </span>
-          </button>
-      </a>
-      {{else}}
-      <a class="h-link" href="/login">
-          <button>
-              <span> Login
-              </span>
-          </button> {{end}}</a>
+    <a href="/home" id="home-link">
+      <img src="static/img/logo.png" alt="Home">
+    </a>
+    <input type="text" placeholder="Search...">
+    <ul>
+      <li class="dropdown">
+        <a href="#">Dropdown 1</a>
+        <div class="dropdown-content">
+          <a href="#">Item 1</a>
+          <a href="#">Item 2</a>
+          <a href="#">Item 3</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">Dropdown 2</a>
+        <div class="dropdown-content">
+          <a href="#">Item 1</a>
+          <a href="#">Item 2</a>
+          <a href="#">Item 3</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">Dropdown 3</a>
+        <div class="dropdown-content">
+          <a href="#">Item 1</a>
+          <a href="#">Item 2</a>
+          <a href="#">Item 3</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">Dropdown 4</a>
+        <div class="dropdown-content">
+          <a href="#">Item 1</a>
+          <a href="#">Item 2</a>
+          <a href="#">Item 3</a>
+        </div>
+      </li>
+    </ul>
+    {{if .Logged}}
+    <a class="h-link" href="/logout">
+      <button>
+        <span> Logout
+        </span>
+      </button>
+    </a>
+    {{else}}
+    <a class="h-link" href="/login">
+      <button>
+        <span> Login
+        </span>
+      </button> {{end}}</a>
   </nav>
 </header>
-<section class="element">
-  <h1>Login</h1>
+<section>
   <form action="/successLogin" method="post">
-    <label for="username">Username:</label>
-    <input type="text" id="username" name="username" required>
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required><br><br>
-    <button type="submit" class="transitionButton">Login</button>
-  </form>
-  <div class="flex">
+    <h3>Login Here</h3>
+
+    <label for="username">Username</label>
+    <input type="text" placeholder="username" id="username" name="username" autofocus required>
+
+    <label for="password">Password</label>
+    <input type="password" placeholder="Password" id="password" name="password" required>
+
+    <button class="button1">Log In</button>
     <div class="invalid">
       <p>{{.Name}}</p>
-      <p>Don't have an account?</p>
     </div>
-    <a href="/register" class="link">Create one</a>
-  </div>
+
+    <div class="spacebetween">
+      <p>Don't have an account?</p><a href="/register" class="link">Create one</a>
+    </div>
+  </form>
 </section>
 <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
   Contribution Guidelines</footer>
+
 </html>
 {{end}}

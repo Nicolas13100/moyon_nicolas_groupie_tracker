@@ -800,6 +800,9 @@ func removeElement(slice []int, index int) []int {
 }
 
 func isFav(gameID int) bool {
+	if username == "" {
+		return false
+	}
 	filename := username + ".json"
 	var userData UserData
 

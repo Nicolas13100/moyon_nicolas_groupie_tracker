@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 )
 
 var (
@@ -19,7 +20,12 @@ var (
 )
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "Register", logged)
+	Invalid := ""
+	data := CombinedData{
+		Logged: logged,
+		Name:   Invalid,
+	}
+	renderTemplate(w, "Register", data)
 }
 
 func confirmRegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -27,30 +33,49 @@ func confirmRegisterHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+	if err := loadUsersFromFile("users.json"); err != nil {
+		fmt.Println(err)
+	}
 	username := r.FormValue("username")
 	password := r.FormValue("password")
-
 	// Check if username already exists
 	if _, exists := users[username]; exists {
-		http.Error(w, "Username already exists", http.StatusConflict)
-		return
+		Invalid := "Username already existe"
+		data := CombinedData{
+			Logged: logged,
+			Name:   Invalid,
+		}
+		renderTemplate(w, "Register", data)
+	} else { // if not , is password valid
+		isValid := validatePassword(password)
+		if !isValid {
+			Invalid := "Password incorect, please use passwords with at least one lowercase letter, one uppercase letter, one digit, and a minimum length of 4 characters"
+			data := CombinedData{
+				Logged: logged,
+				Name:   Invalid,
+			}
+			renderTemplate(w, "Register", data)
+
+		} else { // if password is valid
+			hashedPassword := hashPassword(password)
+			users[username] = User{Username: username, Password: hashedPassword}
+
+			// Save users to a file
+			if err := saveUsersToFile("users.json"); err != nil {
+				http.Error(w, "Failed to register user", http.StatusInternalServerError)
+				return
+			}
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+		}
+
 	}
 
-	hashedPassword := hashPassword(password)
-	users[username] = User{Username: username, Password: hashedPassword}
-
-	// Save users to a file
-	if err := saveUsersToFile("users.json"); err != nil {
-		http.Error(w, "Failed to register user", http.StatusInternalServerError)
-		return
-	}
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	// Load users from a file on startup
 	if err := loadUsersFromFile("users.json"); err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 	// Check if there are query parameters in the URL
 	queryParams := r.URL.Query()
@@ -273,4 +298,16 @@ func updateUserCredentials(name, oldPassword, newPassword string) error {
 	}
 
 	return nil
+}
+
+// Function to validate the password
+func validatePassword(password string) bool {
+	// Define the regex pattern
+	pattern := `(?i)[a-z]+.*[A-Z]+.*\d+.+`
+
+	// Compile the regex pattern into a regex object
+	regex := regexp.MustCompile(pattern)
+
+	// Check if the password matches the regex pattern
+	return regex.MatchString(password)
 }
