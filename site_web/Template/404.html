@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/style1.css">
     <title>404</title>
 </head>
 
@@ -50,10 +50,19 @@
                     </div>
                 </li>
             </ul>
-            <button>
-                <span> Login
-                </span>
-            </button>
+            {{if .}}
+            <a class="h-link" href="/logout">
+                <button>
+                    <span> Logout
+                    </span>
+                </button>
+            </a>
+            {{else}}
+            <a class="h-link" href="/login">
+                <button>
+                    <span> Login
+                    </span>
+                </button> {{end}}</a>
         </nav>
     </header>
     <section class="S404"></section>

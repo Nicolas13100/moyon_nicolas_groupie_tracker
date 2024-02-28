@@ -51,43 +51,68 @@
                     </div>
                 </li>
             </ul>
-            <button>
-                <span> Login
-                </span>
-            </button>
+            {{if .Logged}}
+            <a class="h-link" href="/logout">
+                <button>
+                    <span> Logout
+                    </span>
+                </button>
+            </a>
+            {{else}}
+            <a class="h-link" href="/login">
+                <button>
+                    <span> Login
+                    </span>
+                </button> {{end}}</a>
         </nav>
     </header>
     <section>
         <div class="derriere">
             <div class="abs">
-                <div class="img-abs" style="background-image: url({{.CoverLink}});"></div>
+                <div class="img-abs" style="background-image: url({{.Result.CoverLink}});"></div>
                 <div class="rating-ctn">
                     <div class="rating-texte">
-                        {{if eq .Rating 0.0}}
+                        {{if eq .Result.Rating 0.0}}
                         <div class="rating">N/A</div>
                         {{else}}
-                        <div class="rating">{{.Rating}}% </div>
+                        <div class="rating">{{.Result.Rating}}% </div>
                         {{end}}
                         Rating
                     </div>
                     <div class="rating-texte">
-                        {{if eq .TotalRating 0.0}}
+                        {{if eq .Result.TotalRating 0.0}}
                         <div class="rating">N/A</div>
                         {{else}}
-                        <div class="rating">{{.TotalRating}}%</div>
+                        <div class="rating">{{.Result.TotalRating}}%</div>
                         {{end}}
                         Total Rating
                     </div>
                 </div>
             </div>
             <div class="container">
-                <div class="background" style="background-image: url({{.ScreenshotsLink}});"></div>
-                <div class="titre">{{.Name}}</div>
+                <div class="background" style="background-image: url({{.Result.ScreenshotsLink}});"></div>
+                <div class="titre">{{.Result.Name}}</div>
             </div>
             <div class="texte-ctn">
-                <div class="genre">Genres: {{join .GenresString " "}}</div>
-                <div class="texte">{{.Summary}}</div>
-                <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" />
+                <div class="genre">Genres: {{join .Result.GenresString " "}}</div>
+                <div class="texte">{{.Result.Summary}}</div>
+                <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" {{if
+                    .Fav}}checked="checked" {{end}} />
+                {{if .Logged}}
+                <a class="h-link" href="/fav?id={{.Result.ID}}">
+                    <label class="container2" for="favorite">
+                        <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round"
+                            stroke-width="2" stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24"
+                            width="24" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                            </path>
+                        </svg>
+                        <div class="action">
+                            <span class="option-1">Add to Favorites</span>
+                            <span class="option-2">Remove from Favorites</span>
+                </a>
+                {{else}}
                 <label class="container2" for="favorite">
                     <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
                         stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
@@ -97,8 +122,11 @@
                         </path>
                     </svg>
                     <div class="action">
-                        <span class="option-1">Add to Favorites</span>
-                        <span class="option-2">Added to Favorites</span>
+                        <a class="h-link" href="/login">
+                            <span class="option-1">Add to Favorites</span>
+                            <span class="option-2">Remove from Favorites</span>
+                        </a>
+                        {{end}}
                     </div>
                 </label>
             </div>

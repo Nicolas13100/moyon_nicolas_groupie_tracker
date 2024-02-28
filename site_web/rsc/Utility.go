@@ -798,3 +798,36 @@ func findIndex(slice []int, element int) int {
 func removeElement(slice []int, index int) []int {
 	return append(slice[:index], slice[index+1:]...)
 }
+
+func isFav(gameID int) bool {
+	filename := username + ".json"
+	var userData UserData
+
+	// Open the file with read-write access or create if it doesn't exist
+	file, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return false
+	}
+	defer file.Close()
+
+	// Decode existing data from the file
+	stat, err := file.Stat()
+	if err != nil {
+		return false
+	}
+
+	if stat.Size() != 0 {
+		decoder := json.NewDecoder(file)
+		if err := decoder.Decode(&userData); err != nil {
+			return false
+		}
+	}
+
+	// Check if gameID already exists in Fav slice
+	index := findIndex(userData.Fav, gameID)
+	if index != -1 {
+		return true
+	} else {
+		return false
+	}
+}

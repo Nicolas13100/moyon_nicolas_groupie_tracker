@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 )
 
@@ -20,6 +21,7 @@ func RUN() {
 	http.HandleFunc("/dashboard", dashboardHandler)
 	http.HandleFunc("/gestion", gestionHandler)
 	http.HandleFunc("/changeLogin", changeLoginHandler)
+	http.HandleFunc("/fav", favHandler)
 
 	// Serve static files from the "site_web/static" directory << modified from hangman
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("site_web/static"))))
@@ -62,13 +64,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Wait for both Goroutines to finish
 	wg.Wait()
-	// Once data is fetched, use JavaScript to update the DOM and remove the loading indicator
-	fmt.Fprintf(w, "<script>document.getElementById('loading').remove();</script>")
 
 	// Render the index template with the data
 	data := TemplateData{
 		RecommendedGames: recommendedGames,
 		LastGames:        lastGame,
+		Logged:           logged,
 	}
 	renderTemplate(w, "index", data)
 }
@@ -76,16 +77,48 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 func gameHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the ID from the query parameters
 	// Extract the ID from the query parameters
-	id := r.FormValue("id")
-	if id == "" {
+	idStr := r.FormValue("id")
+	if idStr == "" {
 		fmt.Println("ID parameter is missing or empty on call to gameHandler")
 		return
 	}
-	data := fetchGame(id)
 
-	renderTemplate(w, "game", data)
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		fmt.Println("Failed to parse ID parameter as integer:", err)
+		return
+	}
+	data := fetchGame(idStr)
+	dataS := CombinedData{
+		Result: data,
+		Logged: logged,
+		Fav:    isFav(id),
+	}
+	renderTemplate(w, "game", dataS)
 }
 
 func ErrorHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "404", nil)
+
+	renderTemplate(w, "404", logged)
+}
+
+func favHandler(w http.ResponseWriter, r *http.Request) {
+	idStr := r.FormValue("id")
+	if idStr == "" {
+		fmt.Println("ID parameter is missing or empty on call to gameHandler")
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		fmt.Println("Failed to parse ID parameter as integer:", err)
+		return
+	}
+	err = SaveUserFavorit(username, id)
+	if err != nil {
+		fmt.Println("Failed to save fav :", err)
+		return
+	}
+	// Redirect to /game with the ID as query parameter
+	http.Redirect(w, r, "/game?id="+idStr, http.StatusFound)
 }

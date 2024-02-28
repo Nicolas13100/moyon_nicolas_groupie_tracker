@@ -3,13 +3,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="/statics/fav.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/CSS/style.css">
-    <script src="/static/JS/script.js"></script>
+    <link rel="stylesheet" href="static/style1.css">
     <title>Gestion</title>
 </head>
-<body class="password">
+<body>
+<header>
+    <nav>
+        <a href="/home" id="home-link">
+            <img src="static/img/logo.png" alt="Home">
+        </a>
+        <input type="text" placeholder="Search...">
+        <ul>
+            <li class="dropdown">
+                <a href="#">Dropdown 1</a>
+                <div class="dropdown-content">
+                    <a href="#">Item 1</a>
+                    <a href="#">Item 2</a>
+                    <a href="#">Item 3</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Dropdown 2</a>
+                <div class="dropdown-content">
+                    <a href="#">Item 1</a>
+                    <a href="#">Item 2</a>
+                    <a href="#">Item 3</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Dropdown 3</a>
+                <div class="dropdown-content">
+                    <a href="#">Item 1</a>
+                    <a href="#">Item 2</a>
+                    <a href="#">Item 3</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#">Dropdown 4</a>
+                <div class="dropdown-content">
+                    <a href="#">Item 1</a>
+                    <a href="#">Item 2</a>
+                    <a href="#">Item 3</a>
+                </div>
+            </li>
+        </ul>
+        {{if .Logged}}
+        <a class="h-link" href="/logout">
+            <button>
+                <span> Logout
+                </span>
+            </button>
+        </a>
+        {{else}}
+        <a class="h-link" href="/login">
+            <button>
+                <span> Login
+                </span>
+            </button> {{end}}</a>
+    </nav>
+</header>
+<section class="password">
+    
     <form action="/changeLogin" method="post">
         <label for="oldpassword">Actual Password:</label><br>
         <input type="password" id="oldpassword" name="oldpassword" required><br><br>
@@ -20,6 +75,9 @@
       <form action="/dashboard" method="post">
         <button type="submit">Cancel</button>
     </form>
+</section>
+<footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
+    Contribution Guidelines</footer>
 </body>
 </html>
 {{end}}

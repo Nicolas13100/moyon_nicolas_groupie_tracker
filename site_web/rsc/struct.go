@@ -41,6 +41,7 @@ type Game struct {
 type TemplateData struct {
 	RecommendedGames []Game
 	LastGames        []Game
+	Logged           bool
 }
 
 type GameFull struct {
@@ -103,4 +104,11 @@ type User struct {
 // UserData structure for individual user data
 type UserData struct {
 	Fav []int `json:"fav"`
+}
+
+type CombinedData struct {
+	Result interface{}
+	Name   string
+	Logged bool
+	Fav    bool
 }

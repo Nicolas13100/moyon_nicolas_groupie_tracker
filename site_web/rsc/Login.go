@@ -19,7 +19,7 @@ var (
 )
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "Register", nil)
+	renderTemplate(w, "Register", logged)
 }
 
 func confirmRegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +64,12 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		invalidParam = ""
 	}
 
-	renderTemplate(w, "Login", Invalid)
+	data := CombinedData{
+		Logged: logged,
+		Name:   Invalid,
+	}
+
+	renderTemplate(w, "Login", data)
 }
 
 func successLoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -90,7 +95,7 @@ func successLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	ResetUserValue()
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
 func dashboardHandler(w http.ResponseWriter, r *http.Request) {
@@ -99,9 +104,11 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	autoData := struct {
-		Name string
+		Name   string
+		Logged bool
 	}{
-		Name: username,
+		Name:   username,
+		Logged: logged,
 	}
 	renderTemplate(w, "dashboard", autoData)
 }
@@ -113,8 +120,10 @@ func gestionHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data := struct {
 		PlayerName string
+		Logged     bool
 	}{
 		PlayerName: username,
+		Logged:     logged,
 	}
 	renderTemplate(w, "gestion", data)
 }
