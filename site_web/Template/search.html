@@ -6,7 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style.css">
-    <title>search page</title>
+    <script src="static/script.js"></script>
+    <title>Search page</title>
 </head>
 
 <body>
@@ -17,7 +18,7 @@
             </a>
             <form action="/search" method="GET">
                 <div class="input-container">
-                    <input type="text" name="text" class="input" placeholder="search...">
+                    <input type="text" name="query" id="query" class="input" placeholder="search...">
                     <span class="icon">
                         <svg width="19px" height="19px" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
@@ -88,7 +89,27 @@
         </nav>
     </header>
     <section>
-        <div id="pagination"></div>
+        <div class="indexTop">
+            {{if .SearchResult}}
+            {{range .SearchResult}}
+            <a href="/game?id={{.ID}}">
+                <div class="game-item">
+                    {{if .CoverLink}}
+                    <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                    {{else}}
+                    <img src="static/img/Picture_Not_Yet_Available.png" alt="Picture Not Yet Available">
+                    {{end}}
+                    <div class="indexTextTop">
+                        <div class="indexName">{{.Name}}</div>
+                        <div class="indexGenre">{{join .GenresString " "}}</div>
+                    </div>
+                </div>
+            </a>
+            {{end}}
+            {{else}}
+            <div>No Best games found.</div>
+            {{end}}
+        </div>
     </section>
     <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
         Contribution Guidelines</footer>

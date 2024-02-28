@@ -132,8 +132,8 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	SearchResult = fetchSearch(query)
 
 	dataS := CombinedData{
-		Result: SearchResult,
-		Logged: logged,
+		SearchResult: SearchResult,
+		Logged:       logged,
 	}
 
 	renderTemplate(w, "search", dataS)

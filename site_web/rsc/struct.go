@@ -107,10 +107,11 @@ type UserData struct {
 }
 
 type CombinedData struct {
-	Result interface{}
-	Name   string
-	Logged bool
-	Fav    bool
+	Result       interface{}
+	Name         string
+	Logged       bool
+	Fav          bool
+	SearchResult []GameFull
 }
 
 // struct for search

@@ -14,6 +14,9 @@ import (
 	"time"
 )
 
+const maxRetries = 5                   // Maximum number of retries
+const initialBackoff = 1 * time.Second // Initial backoff duration
+
 var (
 	// GenreMap is a mapping of genre IDs to their names
 	GenreMap     = make(map[int]string)
@@ -308,15 +311,20 @@ func getCoverImageURL(coverID int) string {
 	var covers []struct {
 		URL string `json:"url"`
 	}
-	err = json.Unmarshal(body, &covers)
-	if err != nil {
-		fmt.Println(err)
+	if string(body) == "" {
 		return ""
+	} else if string(body) == `{"message":"Too Many Requests"}` {
+		return ""
+	} else {
+		err = json.Unmarshal(body, &covers)
+		if err != nil {
+			fmt.Println(err)
+			return ""
+		}
 	}
-
 	// Extract cover image URL
 	if len(covers) > 0 {
-		largeCoverURL := strings.Replace(covers[0].URL, "t_thumb", "t_cover_big_2x", 1)
+		largeCoverURL := strings.Replace(covers[0].URL, "t_thumb", "t_1080p", 1)
 		coverLink := "https:" + largeCoverURL
 		err := saveCoverImageURL(coverID, coverLink)
 		if err != nil {
@@ -484,10 +492,16 @@ func getScreenshotsImageURL(ScreenshotsID int) string { // copy past with light 
 	var covers []struct {
 		URL string `json:"url"`
 	}
-	err = json.Unmarshal(body, &covers)
-	if err != nil {
-		fmt.Println(err)
+	if string(body) == "" {
 		return ""
+	} else if string(body) == `{"message":"Too Many Requests"}` {
+		return ""
+	} else {
+		err = json.Unmarshal(body, &covers)
+		if err != nil {
+			fmt.Println(err)
+			return ""
+		}
 	}
 
 	// Extract screenshots image URL
@@ -516,6 +530,9 @@ func fetchGame(id string) GameFull {
 	}
 	if accessToken == "" {
 		fmt.Println("no token was given back")
+		return GameFull{}
+	}
+	if id == "0" {
 		return GameFull{}
 	}
 
@@ -557,6 +574,12 @@ func fetchGame(id string) GameFull {
 		fmt.Println("error Unmarshal", err)
 		return GameFull{}
 	}
+	// Check if the game slice is empty
+	if len(game) == 0 {
+		fmt.Println("error: no game found with the given ID", id)
+		return GameFull{}
+	}
+
 	// Populate struct for each game
 	for i := range game {
 		game[i].GenresString = make([]string, len(game[i].Genres))
@@ -852,7 +875,8 @@ func fetchSearch(search string) []GameFull {
 	// theme 42 MUST be out , it's erotica theme
 	params := `
 	fields *;
-	search "'` + search + `'";`
+	search "'` + search + `'";
+	limit 15;`
 
 	// Make a POST request to the IGDB API with the parameters in the body
 	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
@@ -904,16 +928,55 @@ func fetchSearch(search string) []GameFull {
 			defer wg.Done()
 
 			// Fetch game data
-			gameData := fetchGame(id)
+			gameData := fetchGameWithRetry(id)
 
+			// Check if gameData is empty
+			if gameData.ID == 0 { // Assuming ID is a field that should not be empty in a valid gameData
+				// No need to append empty data
+				return
+			}
+			if gameData.Summary == "" {
+				return
+			}
 			// Lock the mutex before appending to the data slice
 			mu.Lock()
 			defer mu.Unlock()
 			data = append(data, gameData)
 		}(id)
 	}
-
+	fmt.Println(data)
 	// Wait for all goroutines to finish
 	wg.Wait()
 	return data
+}
+
+func fetchGameWithRetry(id string) GameFull {
+	var gameData GameFull
+	retries := 0
+
+	for retries < maxRetries && id != "0" {
+		// Fetch game data
+		gameData = fetchGame(id)
+
+		// If game data is successfully fetched, return it
+		if gameData.ID != 0 {
+			return gameData
+		}
+
+		// Increment retry count
+		retries++
+
+		// Calculate backoff duration
+		backoffDuration := initialBackoff * (1 << uint(retries)) // exponential backoff
+
+		// Wait for backoff duration before retrying
+		fmt.Printf("Retrying after %v...\n", backoffDuration)
+		time.Sleep(backoffDuration)
+	}
+	if id == "0" {
+		fmt.Println("id was 0, bug answer, giving up")
+	} else {
+		fmt.Println("Exceeded maximum number of retries, giving up.")
+	}
+	return gameData
 }
