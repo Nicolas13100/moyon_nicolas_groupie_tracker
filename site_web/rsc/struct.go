@@ -112,3 +112,8 @@ type CombinedData struct {
 	Logged bool
 	Fav    bool
 }
+
+// struct for search
+type GameInfo struct {
+	GameId int `json:"game"`
+}

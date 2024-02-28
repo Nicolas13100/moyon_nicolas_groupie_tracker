@@ -834,3 +834,86 @@ func isFav(gameID int) bool {
 		return false
 	}
 }
+
+func fetchSearch(search string) []GameFull {
+	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
+	apiURL := "https://api.igdb.com/v4/search"
+	accessToken, err := GetTwitchOAuthToken()
+	// keep in mind that max number of token at same time is 25 , oldest one is deleted after
+	if err != nil {
+		fmt.Println("error token", err)
+		return nil
+	}
+	if accessToken == "" {
+		fmt.Println("no token was given back")
+		return nil
+	}
+
+	// theme 42 MUST be out , it's erotica theme
+	params := `
+	fields *;
+	search "'` + search + `'";`
+
+	// Make a POST request to the IGDB API with the parameters in the body
+	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
+	if err != nil {
+		fmt.Println("error new request fetchgame", err)
+		return nil
+	}
+
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("Client-ID", apiKey)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println("error do req", err)
+		return nil
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("error readAll", err)
+		return nil
+	}
+	// Unmarshal JSON data
+	var games []GameInfo
+	err = json.Unmarshal(body, &games)
+	if err != nil {
+		fmt.Println("error unmarshalling", err)
+		return nil
+	}
+
+	var data []GameFull // Assuming GameFull is the type for fetched game data
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	for _, game := range games {
+		// Increment the WaitGroup counter
+		wg.Add(1)
+
+		// Convert game.GameId to string
+		id := strconv.Itoa(game.GameId)
+
+		// Launch a goroutine to fetch game data
+		go func(id string) {
+			defer wg.Done()
+
+			// Fetch game data
+			gameData := fetchGame(id)
+
+			// Lock the mutex before appending to the data slice
+			mu.Lock()
+			defer mu.Unlock()
+			data = append(data, gameData)
+		}(id)
+	}
+
+	// Wait for all goroutines to finish
+	wg.Wait()
+	return data
+}

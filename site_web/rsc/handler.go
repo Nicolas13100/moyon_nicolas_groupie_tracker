@@ -1,8 +1,6 @@
 package API
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -127,76 +125,16 @@ func favHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
-	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3"
-	accessToken, err := GetTwitchOAuthToken()
-	// Parse the form data
-	if err != nil {
-		fmt.Println("error token", err)
-		return
-	}
-	if accessToken == "" {
-		fmt.Println("no token was given back")
-		return
-	}
-	err = r.ParseForm()
-	if err != nil {
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
-		return
-	}
-
+	var SearchResult []GameFull
 	// Extract the search query from the form
-	query := r.Form.Get("query")
+	query := r.URL.Query().Get("query")
 
-	// Define the payload
-	payload := map[string]interface{}{
-		"search": query,
-		"fields": "*",
-		"limit":  10,
+	SearchResult = fetchSearch(query)
+
+	dataS := CombinedData{
+		Result: SearchResult,
+		Logged: logged,
 	}
 
-	// Convert payload to JSON
-	payloadBytes, err := json.Marshal(payload)
-	if err != nil {
-		http.Error(w, "Error marshalling JSON", http.StatusInternalServerError)
-		return
-	}
-
-	// Create a new HTTP request
-	req, err := http.NewRequest("POST", "https://api.igdb.com/v4/search", bytes.NewBuffer(payloadBytes))
-	if err != nil {
-		http.Error(w, "Error creating request", http.StatusInternalServerError)
-		return
-	}
-
-	// Set headers (including authentication if required)
-	req.Header.Set("Content-Type", "text/plain")
-	req.Header.Set("Client-ID", apiKey)
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	req.Header.Set("Content-Type", "application/json")
-
-	// Create an HTTP client and make the request
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(w, "Error making request", http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
-
-	// Check if the request was successful
-	if resp.StatusCode == http.StatusOK {
-		// Decode the response JSON
-		var result interface{}
-		err := json.NewDecoder(resp.Body).Decode(&result)
-		if err != nil {
-			http.Error(w, "Error decoding JSON", http.StatusInternalServerError)
-			return
-		}
-
-		// Write the response
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(result)
-	} else {
-		http.Error(w, "Request failed with status: "+resp.Status, resp.StatusCode)
-	}
+	renderTemplate(w, "search", dataS)
 }
