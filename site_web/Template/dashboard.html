@@ -15,7 +15,10 @@
         <a href="/home" id="home-link">
             <img src="static/img/logo.png" alt="Home">
         </a>
-        <input type="text" placeholder="Search...">
+        <form action="/search" method="GET">
+            <input type="text" name="query" placeholder="Search...">
+            <input type="submit" value="Search">
+        </form>
         <ul>
             <li class="dropdown">
                 <a href="#">Dropdown 1</a>
