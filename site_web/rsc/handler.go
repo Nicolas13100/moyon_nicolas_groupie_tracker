@@ -3,6 +3,7 @@ package API
 import (
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 	"sync"
@@ -89,7 +90,11 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Failed to parse ID parameter as integer:", err)
 		return
 	}
-	data := fetchGame(idStr)
+	data, err := fetchGame(idStr)
+	if err != nil {
+		fmt.Println("gameHandler", err)
+	}
+
 	dataS := CombinedData{
 		Result: data,
 		Logged: logged,
@@ -125,16 +130,58 @@ func favHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
-	var SearchResult []GameFull
-	// Extract the search query from the form
 	query := r.URL.Query().Get("query")
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil || page <= 0 {
+		page = 1
+	}
+	// Parse the form data
+	err = r.ParseForm()
+	if err != nil {
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
+		return
+	}
+	// Get the selected tags
+	tagStrings := r.Form["tags[]"]
 
-	SearchResult = fetchSearch(query)
-
-	dataS := CombinedData{
-		SearchResult: SearchResult,
-		Logged:       logged,
+	// Convert tag strings to integers
+	var tags []int
+	for _, tagString := range tagStrings {
+		tagInt, err := strconv.Atoi(tagString)
+		if err != nil {
+			// Handle error if conversion fails
+			http.Error(w, "Invalid tag: "+tagString, http.StatusBadRequest)
+			return
+		}
+		tags = append(tags, tagInt)
 	}
 
+	// Process the selected tags
+	fmt.Printf("Selected Tags: %v\n", tags)
+
+	searchResults, totalResults, err := fetchSearch(query, page, 5, tags)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Calculate total number of pages
+	totalPages := int(math.Ceil(float64(totalResults) / float64(5)))
+	// Create a slice containing page numbers from 1 to totalPages
+	var pages []int
+	for i := 1; i <= totalPages; i++ {
+		pages = append(pages, i)
+	}
+	dataS := CombinedData{
+		SearchResult: searchResults,
+		Logged:       logged,
+		Pagination: PaginationInfo{
+			PrevPage:   page - 1,
+			Page:       page,
+			NextPage:   page + 1,
+			TotalPages: totalPages,
+			Query:      query,
+			Pages:      pages,
+		},
+	}
 	renderTemplate(w, "search", dataS)
 }

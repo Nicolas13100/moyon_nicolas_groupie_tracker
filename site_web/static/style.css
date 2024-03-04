@@ -94,7 +94,7 @@ nav ul li {
 
 
 /* From uiverse.io by @Ali-Tahmazi99 */
-button {
+a.h-link>button {
     display: inline-block;
     width: 100px;
     height: auto;
@@ -106,8 +106,8 @@ button {
     z-index: 1;
 }
 
-button::before,
-button::after {
+a.h-link>button::before,
+a.h-link>button::after {
     content: '';
     position: absolute;
     top: 0;
@@ -119,27 +119,27 @@ button::after {
     z-index: -1;
 }
 
-button::before {
+a.h-link>button::before {
     left: -10px;
     background: #240046;
 }
 
-button::after {
+a.h-link>button::after {
     right: -10px;
     background: #5a189a;
 }
 
-button:hover::before,
-button:hover::after {
+a.h-link>button:hover::before,
+a.h-link>button:hover::after {
     width: 58%;
 }
 
-button:hover span {
+a.h-link>button:hover span {
     color: #e0aaff;
     transition: 0.3s;
 }
 
-button span {
+a.h-link>button span {
     color: #03045e;
     font-size: 18px;
     transition: all 0.3s ease-in;
@@ -314,16 +314,16 @@ footer {
 .input-container {
     width: 220px;
     position: relative;
-  }
-  
-  .icon {
+}
+
+.icon {
     position: absolute;
     right: 10px;
     top: calc(50% + 5px);
     transform: translateY(calc(-50% - 5px));
-  }
-  
-  .input {
+}
+
+.input {
     width: 100%;
     height: 15px;
     padding: 10px;
@@ -332,25 +332,41 @@ footer {
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
-  }
-  
-  .input:focus {
+}
+
+.input:focus {
     outline: none;
     border: 0.5px solid black;
     box-shadow: -5px -5px 0px black;
-  }
-  
-  .input-container:hover > .icon {
+}
+
+.input-container:hover>.icon {
     animation: anim 1s linear infinite;
-  }
-  
-  @keyframes anim {
+}
+
+@keyframes anim {
+
     0%,
     100% {
-      transform: translateY(calc(-50% - 5px)) scale(1);
+        transform: translateY(calc(-50% - 5px)) scale(1);
     }
-  
+
     50% {
-      transform: translateY(calc(-50% - 5px)) scale(1.1);
+        transform: translateY(calc(-50% - 5px)) scale(1.1);
     }
-  }
+}
+
+.nogame {
+    background-image: url(/static/img/nogame.jpg);
+    width: 100vw;
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+iframe {
+    width: 80vw;
+    height: 50vh;
+    margin: 1rem;
+}
