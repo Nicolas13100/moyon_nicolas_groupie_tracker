@@ -106,9 +106,26 @@ type UserData struct {
 	Fav []int `json:"fav"`
 }
 
+// struct for search
+type GameInfo struct {
+	GameId int `json:"game"`
+}
+
 type CombinedData struct {
-	Result interface{}
-	Name   string
-	Logged bool
-	Fav    bool
+	Result       interface{}
+	Name         string
+	Logged       bool
+	Fav          bool
+	SearchResult []GameFull     `json:"searchResults"`
+	Pagination   PaginationInfo `json:"pagination"`
+}
+
+// PaginationInfo represents pagination information.
+type PaginationInfo struct {
+	PrevPage   int
+	Page       int // Current page number
+	NextPage   int
+	TotalPages int // Total number of pages
+	Query      string
+	Pages      []int
 }

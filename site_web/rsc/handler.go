@@ -1,10 +1,9 @@
 package API
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 	"sync"
@@ -91,7 +90,11 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Failed to parse ID parameter as integer:", err)
 		return
 	}
-	data := fetchGame(idStr)
+	data, err := fetchGame(idStr)
+	if err != nil {
+		fmt.Println("gameHandler", err)
+	}
+
 	dataS := CombinedData{
 		Result: data,
 		Logged: logged,
@@ -127,76 +130,58 @@ func favHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
-	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3"
-	accessToken, err := GetTwitchOAuthToken()
+	query := r.URL.Query().Get("query")
+	page, err := strconv.Atoi(r.URL.Query().Get("page"))
+	if err != nil || page <= 0 {
+		page = 1
+	}
 	// Parse the form data
-	if err != nil {
-		fmt.Println("error token", err)
-		return
-	}
-	if accessToken == "" {
-		fmt.Println("no token was given back")
-		return
-	}
 	err = r.ParseForm()
 	if err != nil {
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		http.Error(w, "Failed to parse form", http.StatusBadRequest)
 		return
 	}
+	// Get the selected tags
+	tagStrings := r.Form["tags[]"]
 
-	// Extract the search query from the form
-	query := r.Form.Get("query")
-
-	// Define the payload
-	payload := map[string]interface{}{
-		"search": query,
-		"fields": "*",
-		"limit":  10,
-	}
-
-	// Convert payload to JSON
-	payloadBytes, err := json.Marshal(payload)
-	if err != nil {
-		http.Error(w, "Error marshalling JSON", http.StatusInternalServerError)
-		return
-	}
-
-	// Create a new HTTP request
-	req, err := http.NewRequest("POST", "https://api.igdb.com/v4/search", bytes.NewBuffer(payloadBytes))
-	if err != nil {
-		http.Error(w, "Error creating request", http.StatusInternalServerError)
-		return
-	}
-
-	// Set headers (including authentication if required)
-	req.Header.Set("Content-Type", "text/plain")
-	req.Header.Set("Client-ID", apiKey)
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	req.Header.Set("Content-Type", "application/json")
-
-	// Create an HTTP client and make the request
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(w, "Error making request", http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
-
-	// Check if the request was successful
-	if resp.StatusCode == http.StatusOK {
-		// Decode the response JSON
-		var result interface{}
-		err := json.NewDecoder(resp.Body).Decode(&result)
+	// Convert tag strings to integers
+	var tags []int
+	for _, tagString := range tagStrings {
+		tagInt, err := strconv.Atoi(tagString)
 		if err != nil {
-			http.Error(w, "Error decoding JSON", http.StatusInternalServerError)
+			// Handle error if conversion fails
+			http.Error(w, "Invalid tag: "+tagString, http.StatusBadRequest)
 			return
 		}
-
-		// Write the response
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(result)
-	} else {
-		http.Error(w, "Request failed with status: "+resp.Status, resp.StatusCode)
+		tags = append(tags, tagInt)
 	}
+
+	// Process the selected tags
+	fmt.Printf("Selected Tags: %v\n", tags)
+
+	searchResults, totalResults, err := fetchSearch(query, page, 5, tags)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// Calculate total number of pages
+	totalPages := int(math.Ceil(float64(totalResults) / float64(5)))
+	// Create a slice containing page numbers from 1 to totalPages
+	var pages []int
+	for i := 1; i <= totalPages; i++ {
+		pages = append(pages, i)
+	}
+	dataS := CombinedData{
+		SearchResult: searchResults,
+		Logged:       logged,
+		Pagination: PaginationInfo{
+			PrevPage:   page - 1,
+			Page:       page,
+			NextPage:   page + 1,
+			TotalPages: totalPages,
+			Query:      query,
+			Pages:      pages,
+		},
+	}
+	renderTemplate(w, "search", dataS)
 }

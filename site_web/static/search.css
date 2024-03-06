@@ -1,0 +1,77 @@
+.games {
+    display: flex;
+    justify-content: center;
+    padding-top: 5rem;
+}
+
+/* Style for the form container */
+.tags {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+    margin-right: 15vw;
+    margin-left: 15vw;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    border-radius: 5px;
+    position: relative;
+    /* Required for pseudo-element */
+    overflow: hidden;
+    /* Hides the pseudo-element overflow */
+}
+
+.tags::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: url(/static/img/scaled.jpeg.webp);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: brightness(80%);
+    /* Adjust the brightness value as needed */
+    z-index: -1;
+    /* Place the pseudo-element behind other content */
+}
+
+/* Style for each checkbox label */
+.tags label {
+    flex: 0 0 auto;
+    /* Prevents the label from growing or shrinking */
+    margin-right: 1rem;
+    /* Adds space between labels */
+    margin-bottom: 1rem;
+    cursor: pointer;
+    /* Changes cursor to pointer on hover, indicating interactivity */
+}
+
+/* Style for the button with class "confirm-button" */
+.confirm-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Hover effect for the button */
+.confirm-button:hover {
+    background-color: #0056b3;
+}
+
+/* Center the button */
+.confirm-button[type="button"] {
+    margin: 0 auto;
+    display: block;
+}
+.column{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

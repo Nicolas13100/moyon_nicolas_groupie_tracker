@@ -1,105 +1,127 @@
 {{define "dashboard"}}
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style1.css">
     <title>dashboard</title>
 </head>
+
 <body>
-    
 
-<header>
-    <nav>
-        <a href="/home" id="home-link">
-            <img src="static/img/logo.png" alt="Home">
-        </a>
-        <form action="/search" method="GET">
-            <input type="text" name="query" placeholder="Search...">
-            <input type="submit" value="Search">
-        </form>
-        <ul>
-            <li class="dropdown">
-                <a href="#">Dropdown 1</a>
-                <div class="dropdown-content">
-                    <a href="#">Item 1</a>
-                    <a href="#">Item 2</a>
-                    <a href="#">Item 3</a>
-                </div>
-            </li>
-            <li class="dropdown">
-                <a href="#">Dropdown 2</a>
-                <div class="dropdown-content">
-                    <a href="#">Item 1</a>
-                    <a href="#">Item 2</a>
-                    <a href="#">Item 3</a>
-                </div>
-            </li>
-            <li class="dropdown">
-                <a href="#">Dropdown 3</a>
-                <div class="dropdown-content">
-                    <a href="#">Item 1</a>
-                    <a href="#">Item 2</a>
-                    <a href="#">Item 3</a>
-                </div>
-            </li>
-            <li class="dropdown">
-                <a href="#">Dropdown 4</a>
-                <div class="dropdown-content">
-                    <a href="#">Item 1</a>
-                    <a href="#">Item 2</a>
-                    <a href="#">Item 3</a>
-                </div>
-            </li>
-        </ul>
-        {{if .Logged}}
-        <a class="h-link" href="/logout">
-            <button>
-                <span> Logout
-                </span>
-            </button>
-        </a>
-        {{else}}
-        <a class="h-link" href="/login">
-            <button>
-                <span> Login
-                </span>
-            </button> {{end}}</a>
-    </nav>
-</header>
-<section class="element">
-    <h1>Dashboard</h1>
-    <div class="container">
 
-    <div class="user">
-        <h3>User : {{.Name}} </h3>
-        <form action="/scoreboard" method="post">
-        <button type="submit">Show my score</button>
-        </form>
-        <form action="/globalscoreboard" method="post">
-        <button type="submit">Show all users scores</button>
-        </form>
-    </div>
-    
-    <div class="head">
-    <form action="/start" method="post">
-        <button type="submit">Start Hangman Game</button>
-    </form>
-    </div>
+    <header>
+        <nav>
+            <a href="/home" id="home-link">
+                <img src="static/img/logo.png" alt="Home">
+            </a>
+            <form action="/search" method="GET">
+                <div class="input-container">
+                    <input type="text" name="query" id="query" class="input" placeholder="search...">
+                    <span class="icon">
+                        <svg width="19px" height="19px" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path opacity="1" d="M14 5H20" stroke="#000" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                                <path opacity="1" d="M14 8H17" stroke="#000" stroke-width="1.5" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                                <path d="M21 11.5C21 16.75 16.75 21 11.5 21C6.25 21 2 16.75 2 11.5C2 6.25 6.25 2 11.5 2"
+                                    stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                </path>
+                                <path opacity="1" d="M22 22L20 20" stroke="#000" stroke-width="3.5"
+                                    stroke-linecap="round" stroke-linejoin="round"></path>
+                            </g>
+                        </svg>
+                    </span>
+                </div>
+            </form>
+            <ul>
+                <li class="dropdown">
+                    <a href="#">Dropdown 1</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Dropdown 2</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Dropdown 3</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Dropdown 4</a>
+                    <div class="dropdown-content">
+                        <a href="#">Item 1</a>
+                        <a href="#">Item 2</a>
+                        <a href="#">Item 3</a>
+                    </div>
+                </li>
+            </ul>
+            {{if .Logged}}
+            <a class="h-link" href="/logout">
+                <button>
+                    <span> Logout
+                    </span>
+                </button>
+            </a>
+            {{else}}
+            <a class="h-link" href="/login">
+                <button>
+                    <span> Login
+                    </span>
+                </button> {{end}}</a>
+        </nav>
+    </header>
+    <section class="element">
+        <h1>Dashboard</h1>
+        <div class="container">
 
-    <div class="end">
-    <form action="/gestion" method="post">
-        <button type="submit">Modify account</button>
-    </form>
-    <form action="/logout" method="post">
-        <button type="submit" class="transitionButton">Logout</button>
-    </form>
-    </div>
-</div>
-</section>
-<footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
-    Contribution Guidelines</footer>
+            <div class="user">
+                <h3>User : {{.Name}} </h3>
+                <form action="/scoreboard" method="post">
+                    <button type="submit">Show my score</button>
+                </form>
+                <form action="/globalscoreboard" method="post">
+                    <button type="submit">Show all users scores</button>
+                </form>
+            </div>
+
+            <div class="head">
+                <form action="/start" method="post">
+                    <button type="submit">Start Hangman Game</button>
+                </form>
+            </div>
+
+            <div class="end">
+                <form action="/gestion" method="post">
+                    <button type="submit">Modify account</button>
+                </form>
+                <form action="/logout" method="post">
+                    <button type="submit" class="transitionButton">Logout</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
+        Contribution Guidelines</footer>
 </body>
+
 </html>
 {{end}}
