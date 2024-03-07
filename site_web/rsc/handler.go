@@ -27,6 +27,7 @@ func RUN() {
 	http.HandleFunc("/fav", favHandler)
 	http.HandleFunc("/search", searchHandler)
 	http.HandleFunc("/favPage", favPageHandler)
+	http.HandleFunc("/categorie", categorieHandler)
 
 	// Serve static files from the "site_web/static" directory << modified from hangman
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("site_web/static"))))
@@ -267,4 +268,10 @@ func favPageHandler(w http.ResponseWriter, r *http.Request) {
 		Logged: logged,
 	}
 	renderTemplate(w, "fav", dataS)
+}
+
+func categorieHandler(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("id")
+	data := fetchGameByGenres(query)
+	fmt.Println(data)
 }

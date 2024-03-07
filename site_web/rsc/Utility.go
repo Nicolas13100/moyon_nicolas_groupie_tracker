@@ -1027,3 +1027,7 @@ func filterByGenres(searchResults []GameFull, tags []int) []GameFull {
 
 	return filteredResults
 }
+
+func fetchGameByGenres(id string) []GameFull {
+
+}
