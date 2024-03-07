@@ -20,7 +20,7 @@
             <form action="/search" method="GET">
                 <div class="input-container">
                     <input type="text" name="query" id="query" class="input" placeholder="search...">
-                    <button type="submit" class="icon" aria-label="Search">
+                    <span class="icon">
                         <svg width="19px" height="19px" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -37,7 +37,7 @@
                                     stroke-linecap="round" stroke-linejoin="round"></path>
                             </g>
                         </svg>
-                    </button>
+                    </span>
                 </div>
             </form>
             <ul>
@@ -65,14 +65,15 @@
                         <a href="#">Item 3</a>
                     </div>
                 </li>
+                {{if .Logged}}
                 <li class="dropdown">
-                    <a href="#">Dropdown 4</a>
+                    <a href="/dashboard">Dashboard</a>
                     <div class="dropdown-content">
-                        <a href="#">Item 1</a>
-                        <a href="#">Item 2</a>
-                        <a href="#">Item 3</a>
+                        <a href="/favPage">Favorites</a>
+                        <a href="/gestion">Account</a>
                     </div>
                 </li>
+                {{end}}
             </ul>
             {{if .Logged}}
             <a class="h-link" href="/logout">

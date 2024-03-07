@@ -1,12 +1,14 @@
 {{define "gestion"}}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style1.css">
     <title>Gestion</title>
 </head>
+
 <body>
     <header>
         <nav>
@@ -61,14 +63,15 @@
                         <a href="#">Item 3</a>
                     </div>
                 </li>
+                {{if .Logged}}
                 <li class="dropdown">
-                    <a href="#">Dropdown 4</a>
+                    <a href="/dashboard">Dashboard</a>
                     <div class="dropdown-content">
-                        <a href="#">Item 1</a>
-                        <a href="#">Item 2</a>
-                        <a href="#">Item 3</a>
+                        <a href="/favPage">Favorites</a>
+                        <a href="/gestion">Account</a>
                     </div>
                 </li>
+                {{end}}
             </ul>
             {{if .Logged}}
             <a class="h-link" href="/logout">
@@ -85,21 +88,22 @@
                 </button> {{end}}</a>
         </nav>
     </header>
-<section class="password">
-    
-    <form action="/changeLogin" method="post">
-        <label for="oldpassword">Actual Password:</label><br>
-        <input type="password" id="oldpassword" name="oldpassword" required><br><br>
-        <label for="newpassword">New password:</label><br>
-        <input type="password" id="newpassword" name="newpassword" required><br><br>
-        <button type="submit" class="transitionButton">Change Password</button>
-      </form>
-      <form action="/dashboard" method="post">
-        <button type="submit">Cancel</button>
-    </form>
-</section>
-<footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
-    Contribution Guidelines</footer>
+    <section class="password">
+
+        <form action="/changeLogin" method="post">
+            <label for="oldpassword">Actual Password:</label><br>
+            <input type="password" id="oldpassword" name="oldpassword" required><br><br>
+            <label for="newpassword">New password:</label><br>
+            <input type="password" id="newpassword" name="newpassword" required><br><br>
+            <button type="submit" class="transitionButton">Change Password</button>
+        </form>
+        <form action="/dashboard" method="post">
+            <button type="submit">Cancel</button>
+        </form>
+    </section>
+    <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
+        Contribution Guidelines</footer>
 </body>
+
 </html>
 {{end}}

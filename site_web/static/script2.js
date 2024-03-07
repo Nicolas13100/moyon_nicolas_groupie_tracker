@@ -28,7 +28,14 @@ ratings.forEach((rating) => {
   rating.setAttribute("style", gradient);
 
   // Wrap the content in a tag to show it above the pseudo element that masks the bar
-  rating.innerHTML = `<span>${ratingScore} ${
-    ratingContent.indexOf("%") >= 0 ? "<small>%</small>" : ""
-  }</span>`;
+  rating.innerHTML = `<span>${ratingScore} ${ratingContent.indexOf("%") >= 0 ? "<small>%</small>" : ""
+    }</span>`;
+});
+
+document.getElementById('favorite').addEventListener('change', function () {
+  if (this.checked) {
+    window.location.href = "/fav?id=" + ID;
+  }else{
+    window.location.href = "/fav?id=" + ID;
+  }
 });

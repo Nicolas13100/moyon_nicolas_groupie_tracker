@@ -64,14 +64,15 @@
                         <a href="#">Item 3</a>
                     </div>
                 </li>
+                {{if .Logged}}
                 <li class="dropdown">
-                    <a href="#">Dropdown 4</a>
+                    <a href="/dashboard">Dashboard</a>
                     <div class="dropdown-content">
-                        <a href="#">Item 1</a>
-                        <a href="#">Item 2</a>
-                        <a href="#">Item 3</a>
+                        <a href="/favPage">Favorites</a>
+                        <a href="/gestion">Account</a>
                     </div>
                 </li>
+                {{end}}
             </ul>
             {{if .Logged}}
             <a class="h-link" href="/logout">
@@ -118,9 +119,9 @@
             <div class="texte-ctn">
                 <div class="genre">Genres: {{join .Result.GenresString " "}}</div>
                 <div class="texte">{{.Result.Summary}}</div>
+                {{if .Logged}}
                 <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" {{if
                     .Fav}}checked="checked" {{end}} />
-                {{if .Logged}}
                 <label class="container2" for="favorite">
                     <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
                         stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
@@ -129,35 +130,41 @@
                             d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
                         </path>
                     </svg>
-                    <div class="action">
-                        <a class="h-link" href="/fav?id={{.Result.ID}}">
+                    <a class="h-link" href="/fav?id={{.Result.ID}}">
+                        <div class="action">
                             <span class="option-1">Add to Favorites</span>
                             <span class="option-2">Remove from Favorites</span>
-                        </a>
-                    </div>
-                    {{else}}
-                    <label class="container2" for="favorite">
-                        <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round"
-                            stroke-width="2" stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24"
-                            width="24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                            </path>
-                        </svg>
-                        <div class="action">
-                            <a class="h-link" href="/login">
-                                <span class="option-1">Add to Favorites</span>
-                                <span class="option-2">Remove from Favorites</span>
-                            </a>
-                            {{end}}
                         </div>
-                    </label>
+                    </a>
             </div>
+            {{else}}
+            <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" />
+            <label class="container2" for="favorite">
+                <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
+                    stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                    </path>
+                </svg>
+                <a class="h-link" href="/login">
+                    <div class="action">
+                        <span class="option-1">Add to Favorites</span>
+                        <span class="option-2">Remove from Favorites</span>
+                    </div>
+                </a>
+                {{end}}
+        </div>
+        </label>
+        </div>
         </div>
     </section>
     <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
         Contribution Guidelines</footer>
 </body>
+<script>
+    var ID = `{{.Result.ID}}`;
+</script>
 <script src="static/script2.js"></script>
 
 </html>

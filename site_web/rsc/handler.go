@@ -1,10 +1,12 @@
 package API
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"strconv"
 	"sync"
 )
@@ -24,6 +26,7 @@ func RUN() {
 	http.HandleFunc("/changeLogin", changeLoginHandler)
 	http.HandleFunc("/fav", favHandler)
 	http.HandleFunc("/search", searchHandler)
+	http.HandleFunc("/favPage", favPageHandler)
 
 	// Serve static files from the "site_web/static" directory << modified from hangman
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("site_web/static"))))
@@ -120,6 +123,12 @@ func favHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Failed to parse ID parameter as integer:", err)
 		return
 	}
+	// if id is error return without saving
+	if id == 0 {
+		http.Redirect(w, r, "/game?id="+idStr, http.StatusFound)
+		return
+	}
+
 	err = SaveUserFavorit(username, id)
 	if err != nil {
 		fmt.Println("Failed to save fav :", err)
@@ -184,4 +193,78 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	renderTemplate(w, "search", dataS)
+}
+
+func favPageHandler(w http.ResponseWriter, r *http.Request) {
+	if !logged {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	jsonFileName := username + ".json"
+
+	// Read the JSON data from the file
+	jsonData, err := os.ReadFile(jsonFileName)
+	if err != nil {
+		fmt.Println("Error reading file:", err)
+		return
+	}
+
+	// Unmarshal the JSON data into a UserData struct
+	var userData UserData
+	err = json.Unmarshal(jsonData, &userData)
+	if err != nil {
+		fmt.Println("Error favPage:", err)
+		return
+	}
+
+	// Extract the IDs from the Fav field
+	ids := userData.Fav
+
+	// Create a channel to synchronize goroutines
+	done := make(chan bool)
+
+	// Create a wait group to wait for all goroutines to finish
+	var wg sync.WaitGroup
+
+	// Create a slice to store the fetched game data
+	var games []GameFull
+
+	// Convert each ID to a string and fetch game data concurrently
+	for _, id := range ids {
+		wg.Add(1) // Increment the wait group counter
+		go func(id int) {
+			defer wg.Done() // Decrement the wait group counter when done
+			defer func() {
+				if r := recover(); r != nil {
+					fmt.Printf("Goroutine panicked with error: %v\n", r)
+					return
+				}
+			}()
+			stringID := strconv.Itoa(id)
+			data, err := fetchGame(stringID)
+			if err != nil {
+				fmt.Println("gameHandler", err)
+				return
+			}
+
+			// Append the fetched data to the slice
+			games = append(games, data)
+		}(id)
+	}
+
+	// Wait for all goroutines to finish
+	go func() {
+		wg.Wait()
+		close(done) // Close the channel to signal completion
+	}()
+
+	// Wait for the completion signal
+	<-done
+
+	// Now 'games' contains all the fetched game data
+	dataS := CombinedData{
+		Result: games,
+		Logged: logged,
+	}
+	renderTemplate(w, "fav", dataS)
 }

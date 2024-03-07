@@ -1,6 +1,7 @@
 {{define "Register"}}
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -63,14 +64,15 @@
                         <a href="#">Item 3</a>
                     </div>
                 </li>
+                {{if .Logged}}
                 <li class="dropdown">
-                    <a href="#">Dropdown 4</a>
+                    <a href="/dashboard">Dashboard</a>
                     <div class="dropdown-content">
-                        <a href="#">Item 1</a>
-                        <a href="#">Item 2</a>
-                        <a href="#">Item 3</a>
+                        <a href="/favPage">Favorites</a>
+                        <a href="/gestion">Account</a>
                     </div>
                 </li>
+                {{end}}
             </ul>
             {{if .Logged}}
             <a class="h-link" href="/logout">
@@ -89,22 +91,23 @@
     </header>
     <section>
         <form action="/confirmRegister" method="post" class="login">
-          <h3>Register Here</h3>
-      
-          <label for="username">Username</label>
-          <input type="text" placeholder="username" id="username" name="username" autofocus required>
-      
-          <label for="password">Password</label>
-          <input type="password" placeholder="Password" id="password" name="password" required>
-      
-          <button class="button1">Register</button>
-          <div class="invalid">
-            <p>{{.Name}}</p>
-          </div>
+            <h3>Register Here</h3>
+
+            <label for="username">Username</label>
+            <input type="text" placeholder="username" id="username" name="username" autofocus required>
+
+            <label for="password">Password</label>
+            <input type="password" placeholder="Password" id="password" name="password" required>
+
+            <button class="button1">Register</button>
+            <div class="invalid">
+                <p>{{.Name}}</p>
+            </div>
         </form>
-      </section>
+    </section>
     <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
         Contribution Guidelines</footer>
 </body>
+
 </html>
 {{end}}

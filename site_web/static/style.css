@@ -370,3 +370,9 @@ iframe {
     height: 50vh;
     margin: 1rem;
 }
+
+.centreFav{
+    display: flex;
+    align-items: center;
+    height: 80vh;
+}
