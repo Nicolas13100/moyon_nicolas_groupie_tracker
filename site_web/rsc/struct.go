@@ -118,6 +118,7 @@ type CombinedData struct {
 	Fav          bool
 	SearchResult []GameFull     `json:"searchResults"`
 	Pagination   PaginationInfo `json:"pagination"`
+	Result2      []Game         `json:"Results"`
 }
 
 // PaginationInfo represents pagination information.

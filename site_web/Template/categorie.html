@@ -1,13 +1,13 @@
-{{define "game"}}
+{{define "categorie"}}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/style1.css">
-
-    <title>Game Page</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script src="static/script.js"></script>
+    <title>Main Page</title>
 </head>
 
 <body>
@@ -110,82 +110,30 @@
         </nav>
     </header>
     <section>
-        <div class="derriere">
-            <div class="abs">
-                <div class="img-abs" style="background-image: url({{.Result.CoverLink}});"></div>
-                <div class="rating-ctn">
-                    <div class="rating-texte">
-                        {{if eq .Result.Rating 0.0}}
-                        <div class="rating">N/A</div>
-                        {{else}}
-                        <div class="rating">{{.Result.Rating}}% </div>
-                        {{end}}
-                        Rating
-                    </div>
-                    <div class="rating-texte">
-                        {{if eq .Result.TotalRating 0.0}}
-                        <div class="rating">N/A</div>
-                        {{else}}
-                        <div class="rating">{{.Result.TotalRating}}%</div>
-                        {{end}}
-                        Total Rating
-                    </div>
-                </div>
-            </div>
-            <div class="container">
-                <div class="background" style="background-image: url({{.Result.ScreenshotsLink}});"></div>
-                <div class="titre">{{.Result.Name}}</div>
-            </div>
-            <div class="texte-ctn">
-                <div class="genre">Genres: {{join .Result.GenresString " "}}</div>
-                <div class="texte">{{.Result.Summary}}</div>
-                {{if .Logged}}
-                <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" {{if
-                    .Fav}}checked="checked" {{end}} />
-                <label class="container2" for="favorite">
-                    <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
-                        stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                        </path>
-                    </svg>
-                    <a class="h-link" href="/fav?id={{.Result.ID}}">
-                        <div class="action">
-                            <span class="option-1">Add to Favorites</span>
-                            <span class="option-2">Remove from Favorites</span>
+        <div class="game">
+            <h1>{{with index .Result2 0}}{{index .GenresString 0}}{{end}}</h1>
+            <div class="indexTop">
+                {{if .Result2}}
+                {{range .Result2}}
+                <a href="/game?id={{.ID}}">
+                    <div class="game-item">
+                        <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                        <div class="indexTextTop">
+                            <div class="indexName">{{.Name}}</div>
+                            <div class="indexGenre">{{join .GenresString " "}}</div>
                         </div>
-                    </a>
-            </div>
-            {{else}}
-            <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" />
-            <label class="container2" for="favorite">
-                <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
-                    stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                    </path>
-                </svg>
-                <a class="h-link" href="/login">
-                    <div class="action">
-                        <span class="option-1">Add to Favorites</span>
-                        <span class="option-2">Remove from Favorites</span>
                     </div>
                 </a>
                 {{end}}
-        </div>
-        </label>
-        </div>
+                {{else}}
+                <div>No games found.</div>
+                {{end}}
+            </div>
         </div>
     </section>
     <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
         Contribution Guidelines</footer>
 </body>
-<script>
-    var ID = `{{.Result.ID}}`;
-</script>
-<script src="static/script2.js"></script>
 
 </html>
 {{end}}

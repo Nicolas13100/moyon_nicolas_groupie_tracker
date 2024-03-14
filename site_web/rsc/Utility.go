@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -21,6 +22,9 @@ var (
 	// GenreMap is a mapping of genre IDs to their names
 	GenreMap     = make(map[int]string)
 	genreMapOnce sync.Once
+	// Slice to store fetched game data
+	searchdata []GameFull
+	prevQuery  string
 )
 
 func renderTemplate(w http.ResponseWriter, tmplName string, data interface{}) {
@@ -860,115 +864,152 @@ func isFav(gameID int) bool {
 }
 
 func fetchSearch(query string, page, resultsPerPage int, tags []int) ([]GameFull, int, error) {
-	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
-	apiURL := "https://api.igdb.com/v4/search"
-	accessToken, err := GetTwitchOAuthToken()
-	// keep in mind that max number of token at same time is 25 , oldest one is deleted after
-	if err != nil {
-		fmt.Println("error token", err)
-		return nil, 0, err
-	}
-	if accessToken == "" {
-		fmt.Println("no token was given back")
-		return nil, 0, nil
-	}
+	// check if need new search or pagination
+	if len(searchdata) != 0 && query == prevQuery {
+		// sort the data by tags
+		if len(tags) != 0 && tags != nil {
+			searchdata = filterByGenres(searchdata, tags)
+		}
 
-	// theme 42 MUST be out , it's erotica theme
-	params := `
+		// Sort the data by rating
+		sort.Slice(searchdata, func(i, j int) bool {
+			return searchdata[i].Rating > searchdata[j].Rating // Sorting in descending order by rating
+		})
+		// Calculate start and end indices based on page number and results per page
+		startIndex := (page - 1) * resultsPerPage
+		endIndex := page * resultsPerPage
+
+		// Ensure endIndex does not exceed the length of the data slice
+		if startIndex > len(searchdata) {
+			startIndex = len(searchdata) - 1
+		}
+		if endIndex > len(searchdata) {
+			endIndex = len(searchdata)
+		}
+
+		// Extract subset of data for the requested page
+		subset := searchdata[startIndex:endIndex]
+
+		// Return subset of data for the requested page and total number of results
+		return subset, len(searchdata), nil
+	} else {
+		searchdata = searchdata[:0]
+		prevQuery = query
+		apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
+		apiURL := "https://api.igdb.com/v4/search"
+		accessToken, err := GetTwitchOAuthToken()
+		// keep in mind that max number of token at same time is 25 , oldest one is deleted after
+		if err != nil {
+			fmt.Println("error token", err)
+			return nil, 0, err
+		}
+		if accessToken == "" {
+			fmt.Println("no token was given back")
+			return nil, 0, nil
+		}
+
+		// theme 42 MUST be out , it's erotica theme
+		params := `
     fields *;
     search "` + query + `";
     limit 30;`
 
-	// Make a POST request to the IGDB API with the parameters in the body
-	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
-	if err != nil {
-		fmt.Println("error new request fetchgame", err)
-		return nil, 0, err
-	}
+		// Make a POST request to the IGDB API with the parameters in the body
+		req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
+		if err != nil {
+			fmt.Println("error new request fetchgame", err)
+			return nil, 0, err
+		}
 
-	req.Header.Set("Content-Type", "text/plain")
-	req.Header.Set("Client-ID", apiKey)
-	req.Header.Set("Authorization", "Bearer "+accessToken)
-	req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Content-Type", "text/plain")
+		req.Header.Set("Client-ID", apiKey)
+		req.Header.Set("Authorization", "Bearer "+accessToken)
+		req.Header.Set("Content-Type", "application/json")
 
-	// Send the request
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		fmt.Println("error do req", err)
-		return nil, 0, err
-	}
-	defer resp.Body.Close()
+		// Send the request
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			fmt.Println("error do req", err)
+			return nil, 0, err
+		}
+		defer resp.Body.Close()
 
-	// Read the response body
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("error readAll", err)
-		return nil, 0, err
-	}
+		// Read the response body
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("error readAll", err)
+			return nil, 0, err
+		}
 
-	// Unmarshal JSON data
-	var games []GameInfo
-	err = json.Unmarshal(body, &games)
-	if err != nil {
-		fmt.Println("error unmarshalling", err)
-		return nil, 0, err
-	}
+		// Unmarshal JSON data
+		var games []GameInfo
+		err = json.Unmarshal(body, &games)
+		if err != nil {
+			fmt.Println("error unmarshalling", err)
+			return nil, 0, err
+		}
 
-	// WaitGroup to wait for all goroutines to finish
-	var wg sync.WaitGroup
-	// Mutex to ensure safe access to the data slice
-	var mu sync.Mutex
-	// Slice to store fetched game data
-	var data []GameFull
+		// WaitGroup to wait for all goroutines to finish
+		var wg sync.WaitGroup
+		// Mutex to ensure safe access to the data slice
+		var mu sync.Mutex
 
-	for _, game := range games {
-		// Increment the WaitGroup counter
-		wg.Add(1)
-		// Convert game.GameId to string
-		id := strconv.Itoa(game.GameId)
-		// Launch a goroutine to fetch game data
-		go func(id string) {
-			defer wg.Done()
-			defer func() {
-				if r := recover(); r != nil {
-					fmt.Printf("Goroutine panicked with error: %v\n", r)
-					return
+		for _, game := range games {
+			// Increment the WaitGroup counter
+			wg.Add(1)
+			// Convert game.GameId to string
+			id := strconv.Itoa(game.GameId)
+			// Launch a goroutine to fetch game data
+			go func(id string) {
+				defer wg.Done()
+				defer func() {
+					if r := recover(); r != nil {
+						fmt.Printf("Goroutine panicked with error: %v\n", r)
+						return
+					}
+				}()
+				// Fetch game data with retry
+				gameData := fetchGameWithRetry(id)
+				// Lock the mutex before appending to the data slice
+				mu.Lock()
+				defer mu.Unlock()
+				if gameData.ID != 0 {
+					// Append gameData to data slice
+					searchdata = append(searchdata, gameData)
 				}
-			}()
-			// Fetch game data with retry
-			gameData := fetchGameWithRetry(id)
-			// Lock the mutex before appending to the data slice
-			mu.Lock()
-			defer mu.Unlock()
-			if gameData.ID != 0 {
-				// Append gameData to data slice
-				data = append(data, gameData)
-			}
-		}(id)
-	}
-	// Wait for all goroutines to finish
-	wg.Wait()
+			}(id)
+		}
+		// Wait for all goroutines to finish
+		wg.Wait()
 
-	if len(tags) != 0 && tags != nil {
-		data = filterByGenres(data, tags)
-	}
-	// Calculate start and end indices based on page number and results per page
-	startIndex := (page - 1) * resultsPerPage
-	endIndex := page * resultsPerPage
+		// sort the data by tags
+		if len(tags) != 0 && tags != nil {
+			searchdata = filterByGenres(searchdata, tags)
+		}
 
-	// Ensure endIndex does not exceed the length of the data slice
-	if startIndex > len(data) {
-		startIndex = len(data) - 1
-	}
-	if endIndex > len(data) {
-		endIndex = len(data)
-	}
+		// Sort the data by rating
+		sort.Slice(searchdata, func(i, j int) bool {
+			return searchdata[i].Rating > searchdata[j].Rating // Sorting in descending order by rating
+		})
 
-	// Extract subset of data for the requested page
-	subset := data[startIndex:endIndex]
+		// Calculate start and end indices based on page number and results per page
+		startIndex := (page - 1) * resultsPerPage
+		endIndex := page * resultsPerPage
 
-	// Return subset of data for the requested page and total number of results
-	return subset, len(data), nil
+		// Ensure endIndex does not exceed the length of the data slice
+		if startIndex > len(searchdata) {
+			startIndex = len(searchdata) - 1
+		}
+		if endIndex > len(searchdata) {
+			endIndex = len(searchdata)
+		}
+
+		// Extract subset of data for the requested page
+		subset := searchdata[startIndex:endIndex]
+
+		// Return subset of data for the requested page and total number of results
+		return subset, len(searchdata), nil
+	}
 }
 
 func fetchGameWithRetry(id string) GameFull {
@@ -1002,6 +1043,7 @@ func fetchGameWithRetry(id string) GameFull {
 		fmt.Println("Exceeded maximum number of retries, giving up.")
 		retries = 0
 	}
+	retries = 0
 	return gameData
 }
 
@@ -1028,6 +1070,144 @@ func filterByGenres(searchResults []GameFull, tags []int) []GameFull {
 	return filteredResults
 }
 
-func fetchGameByGenres(id string) []GameFull {
+func fetchGameByGenres(id string) []Game {
+	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
+	apiURL := "https://api.igdb.com/v4/games"
+	accessToken, err := GetTwitchOAuthToken()
+	// keep in mind that max number of token at same time is 25 , oldest one is deleted after
+	if err != nil {
+		fmt.Println("error token", err)
+		return nil
+	}
+	if accessToken == "" {
+		fmt.Println("no token was given back")
+	}
+	// theme 42 MUST be out , it's erotica theme
+	params := `
+	fields *;
+	where themes != 42 & genres = ` + id + `;
+	limit 10;
+	sort rating desc;
+	`
+	// Make a POST request to the IGDB API with the parameters in the body
+	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
+	if err != nil {
+		return nil
+	}
 
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("Client-ID", apiKey)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil
+	}
+
+	// Unmarshal the JSON response
+	var games []Game
+	err = json.Unmarshal(body, &games)
+	if err != nil {
+		return nil
+	}
+	// Populate struct for each game
+	for i := range games {
+		games[i].GenresString = make([]string, len(games[i].Genres))
+		for j, genreID := range games[i].Genres {
+			games[i].GenresString[j] = GetGenreNameByID(genreID)
+		}
+	}
+	// Populate struct for each game
+	for y := range games {
+		games[y].CoverLink = getSavedCoverImageURL(games[y].Cover)
+		games[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(games[y].FirstReleaseDate)
+	}
+	return games
+
+}
+
+func fetchGameByGenresForCategories(id string) []Game {
+	apiKey := "3pfgrdttfa66z525wc6d40uzjv9nq3" // the client ID
+	apiURL := "https://api.igdb.com/v4/games"
+	accessToken, err := GetTwitchOAuthToken()
+	// keep in mind that max number of token at same time is 25 , oldest one is deleted after
+	if err != nil {
+		fmt.Println("error token", err)
+		return nil
+	}
+	if accessToken == "" {
+		fmt.Println("no token was given back")
+	}
+	// theme 42 MUST be out , it's erotica theme
+	params := `
+	fields *;
+	where themes != 42 & genres = ` + id + `;
+	limit 1;
+	sort rating desc;
+	`
+	// Make a POST request to the IGDB API with the parameters in the body
+	req, err := http.NewRequest("POST", apiURL, strings.NewReader(params))
+	if err != nil {
+		return nil
+	}
+
+	req.Header.Set("Content-Type", "text/plain")
+	req.Header.Set("Client-ID", apiKey)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Send the request
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+
+	// Read the response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil
+	}
+
+	// Unmarshal the JSON response
+	var games []Game
+	err = json.Unmarshal(body, &games)
+	if err != nil {
+		return nil
+	}
+	// Populate struct for each game
+	for i := range games {
+		games[i].GenresString = make([]string, len(games[i].Genres))
+		for j, genreID := range games[i].Genres {
+			games[i].GenresString[j] = GetGenreNameByID(genreID)
+		}
+	}
+	// Populate struct for each game
+	for y := range games {
+		games[y].CoverLink = getSavedCoverImageURL(games[y].Cover)
+		games[y].FirstReleaseDateHuman = formatUnixTimestampToFrenchDate(games[y].FirstReleaseDate)
+	}
+	return games
+
+}
+
+func fetchAllGames() []Game {
+	var allGames []Game
+
+	// Iterate over the GenreMap and launch a goroutine for each genre ID
+	for id := range GenreMap {
+		games := fetchGameByGenresForCategories(fmt.Sprintf("%d", id)) // Convert id to string
+		allGames = append(allGames, games...)
+	}
+
+	return allGames
 }

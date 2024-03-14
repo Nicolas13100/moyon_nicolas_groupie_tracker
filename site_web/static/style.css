@@ -376,3 +376,13 @@ iframe {
     align-items: center;
     height: 80vh;
 }
+
+.game {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15vh;
+}
+
+.game h1{
+    margin-bottom: 1rem;
+}
