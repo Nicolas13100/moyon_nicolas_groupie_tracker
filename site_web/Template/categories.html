@@ -1,4 +1,4 @@
-{{define "categorie"}}
+{{define "categories"}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/styleCategories.css">
     <script src="static/script.js"></script>
     <title>Main Page</title>
 </head>
@@ -41,7 +42,7 @@
             </form>
             <ul>
                 <li class="dropdown">
-                    <a href="#">Dropdown 1</a>
+                    <a href="/categories">Dropdown 1</a>
                     <div class="dropdown-content">
                         <a href="/categorie?id=31">Adventure</a>
                         <a href="/categorie?id=33">Arcade</a>
@@ -110,7 +111,23 @@
         </nav>
     </header>
     <section>
-       
+        <div class="allCategories">
+            <h1>Game Categories</h1>
+        </div>
+        <div class="allCategories">
+            {{range .Result}}
+            <div class="card">
+                <a href="/categorie?id={{ index .Genres 0 }}">
+                    <div class="background" style="background-image: url('{{.CoverLink}}');"></div>
+                    <div class="content">
+                        <div class="text-container">
+                            {{.GenresString}}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {{end}}
+        </div>
     </section>
     <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
         Contribution Guidelines</footer>

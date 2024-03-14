@@ -283,7 +283,6 @@ func categorieHandler(w http.ResponseWriter, r *http.Request) {
 
 func categoriesHandler(w http.ResponseWriter, r *http.Request) {
 	data := fetchAllGames()
-	fmt.Println(data)
 	dataS := CombinedData{
 		Result: data,
 		Logged: logged,

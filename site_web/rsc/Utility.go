@@ -29,7 +29,7 @@ var (
 
 func renderTemplate(w http.ResponseWriter, tmplName string, data interface{}) {
 	// Taken from hangman
-	tmpl, err := template.New(tmplName).Funcs(template.FuncMap{"join": join}).ParseFiles("site_web/Template/" + tmplName + ".html")
+	tmpl, err := template.New(tmplName).Funcs(template.FuncMap{"join": join, "contains": containsString}).ParseFiles("site_web/Template/" + tmplName + ".html")
 	if err != nil {
 		fmt.Println("Error parsing template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -47,6 +47,15 @@ func renderTemplate(w http.ResponseWriter, tmplName string, data interface{}) {
 func join(s []string, sep string) string {
 	// same
 	return strings.Join(s, sep)
+}
+
+func containsString(slice []string, str string) bool {
+	for _, s := range slice {
+		if s == str {
+			return true
+		}
+	}
+	return false
 }
 
 func fetchRecommendedGames() ([]Game, error) {
@@ -1201,13 +1210,51 @@ func fetchGameByGenresForCategories(id string) []Game {
 }
 
 func fetchAllGames() []Game {
-	var allGames []Game
+	var allGames []GameWithGenre
 
-	// Iterate over the GenreMap and launch a goroutine for each genre ID
+	// Define a wait group to wait for all goroutines to finish
+	var wg sync.WaitGroup
+
+	// Define a mutex to safely access allGames slice from multiple goroutines
+	var mu sync.Mutex
+
+	// Iterate over the GenreMap
 	for id := range GenreMap {
-		games := fetchGameByGenresForCategories(fmt.Sprintf("%d", id)) // Convert id to string
-		allGames = append(allGames, games...)
+		// Increment the wait group counter
+		wg.Add(1)
+		// Launch a goroutine
+		go func(genreID int) {
+			// Decrement the wait group counter when the goroutine completes
+			defer wg.Done()
+			// Fetch games for the current genre ID
+			games := fetchGameByGenresForCategories(strconv.Itoa(genreID))
+			// Lock the mutex before appending to allGames
+			mu.Lock()
+			defer mu.Unlock()
+			// Append the fetched games to allGames along with genre string
+			for _, game := range games {
+				gameWithGenre := GameWithGenre{
+					Game:        game,
+					GenreString: GenreMap[genreID], // Assuming GenreMap is accessible
+				}
+				allGames = append(allGames, gameWithGenre)
+			}
+		}(id) // Pass 'id' to the goroutine to avoid concurrency issues
 	}
 
-	return allGames
+	// Wait for all goroutines to finish
+	wg.Wait()
+
+	// Sort allGames slice by GenreString
+	sort.Slice(allGames, func(i, j int) bool {
+		return allGames[i].GenreString < allGames[j].GenreString
+	})
+
+	// Convert to slice of Game without GenreString
+	var result []Game
+	for _, gameWithGenre := range allGames {
+		result = append(result, gameWithGenre.Game)
+	}
+
+	return result
 }

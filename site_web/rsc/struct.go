@@ -130,3 +130,9 @@ type PaginationInfo struct {
 	Query      string
 	Pages      []int
 }
+
+// for cartegories page
+type GameWithGenre struct {
+	Game
+	GenreString string
+}
