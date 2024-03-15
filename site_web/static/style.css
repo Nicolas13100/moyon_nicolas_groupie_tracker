@@ -80,10 +80,11 @@ nav ul li {
 }
 
 .dropdown-content {
+    
     display: none;
     position: absolute;
     background-color: #492E87;
-    min-width: 160px;
+    min-width: 200px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
     padding: 10px;
@@ -94,9 +95,11 @@ nav ul li {
 .dropdown-content a {
     color: #eee;
     text-decoration: none;
-    padding: 10px 0; /* Increased padding for more space */
-    margin-bottom: 5px; /* Added margin between links */
+    padding: 5px 0; /* Increased padding for more space */
+    margin-right: 10px; /* Added margin between links */
     transition: background-color 0.3s ease;
+    flex: 0 0 calc(50% - 10px); /* Adjusts width to 50% with margin included */
+    box-sizing: border-box; /* Includes padding and border in the width */
 }
 
 .dropdown-content a:hover {
@@ -104,9 +107,11 @@ nav ul li {
 }
 
 .dropdown:hover .dropdown-content {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
     opacity: 1;
 }
+
 
 /* From uiverse.io by @Ali-Tahmazi99 */
 a.h-link>button {
