@@ -49,6 +49,7 @@ header {
     color: white;
     text-align: center;
     text-decoration: none;
+    z-index: 100;
 }
 
 nav {
@@ -371,7 +372,7 @@ iframe {
     margin: 1rem;
 }
 
-.centreFav{
+.centreFav {
     display: flex;
     align-items: center;
     height: 80vh;
@@ -383,6 +384,6 @@ iframe {
     margin-top: 15vh;
 }
 
-.game h1{
+.game h1 {
     margin-bottom: 1rem;
 }
