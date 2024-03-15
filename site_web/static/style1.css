@@ -74,17 +74,36 @@ nav ul li {
 }
 
 .dropdown-content {
+    
     display: none;
     position: absolute;
     background-color: #492E87;
-    min-width: 160px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    min-width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
+    padding: 10px;
+    border-radius: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.dropdown-content a {
+    color: #eee;
+    text-decoration: none;
+    padding: 5px 0; /* Increased padding for more space */
+    margin-right: 10px; /* Added margin between links */
+    transition: background-color 0.3s ease;
+    flex: 0 0 calc(50% - 10px); /* Adjusts width to 50% with margin included */
+    box-sizing: border-box; /* Includes padding and border in the width */
+}
+
+.dropdown-content a:hover {
+    background-color: #634DA0;
 }
 
 .dropdown:hover .dropdown-content {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    opacity: 1;
 }
 
 

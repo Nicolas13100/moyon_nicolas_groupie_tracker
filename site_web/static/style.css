@@ -84,15 +84,29 @@ nav ul li {
     position: absolute;
     background-color: #492E87;
     min-width: 160px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
+    padding: 10px;
+    border-radius: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.dropdown-content a {
+    color: #eee;
+    text-decoration: none;
+    padding: 10px 0; /* Increased padding for more space */
+    margin-bottom: 5px; /* Added margin between links */
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-content a:hover {
+    background-color: #634DA0;
 }
 
 .dropdown:hover .dropdown-content {
-    display: flex;
-    flex-direction: column;
+    display: block;
+    opacity: 1;
 }
-
 
 /* From uiverse.io by @Ali-Tahmazi99 */
 a.h-link>button {
