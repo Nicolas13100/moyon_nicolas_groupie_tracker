@@ -11,8 +11,9 @@ import (
 	"sync"
 )
 
+// RUN function sets up HTTP routes and starts the server
 func RUN() {
-	// used same system than hangman, since it was working prety well
+	// Setting up HTTP routes for different endpoints
 	http.HandleFunc("/", ErrorHandler)
 	http.HandleFunc("/home", indexHandler)
 	http.HandleFunc("/game", gameHandler)
@@ -30,18 +31,19 @@ func RUN() {
 	http.HandleFunc("/categorie", categorieHandler)
 	http.HandleFunc("/categories", categoriesHandler)
 
-	// Serve static files from the "site_web/static" directory << modified from hangman
+	// Serve static files from the "site_web/static" directory
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("site_web/static"))))
 
-	// Print statement indicating server is running << same
+	// Print statement indicating server is running
 	fmt.Println("Server is running on :8080 http://localhost:8080/home")
 
-	// Start the server << same
+	// Start the server
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
 }
 
+// indexHandler handles requests for the home page
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	// Use Goroutines to fetch recommended and last added games concurrently
 	var recommendedGames []Game
@@ -81,8 +83,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "index", data)
 }
 
+// gameHandler handles requests for individual game pages
 func gameHandler(w http.ResponseWriter, r *http.Request) {
-	// Extract the ID from the query parameters
 	// Extract the ID from the query parameters
 	idStr := r.FormValue("id")
 	if idStr == "" {
@@ -108,13 +110,16 @@ func gameHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "game", dataS)
 }
 
+// ErrorHandler handles 404 errors
 func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, "404", logged)
 }
 
+// favHandler handles adding games to favorites
 func favHandler(w http.ResponseWriter, r *http.Request) {
 	if !logged {
+		// Redirect to login if not logged in
 		http.Redirect(w, r, "/login", http.StatusFound)
 		return
 	}
@@ -150,9 +155,9 @@ func favHandler(w http.ResponseWriter, r *http.Request) {
 		// Redirect to /game with the ID as query parameter
 		http.Redirect(w, r, "/game?id="+idStr, http.StatusFound)
 	}
-
 }
 
+// searchHandler handles game search functionality
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
 	page, err := strconv.Atoi(r.URL.Query().Get("page"))
@@ -210,6 +215,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "search", dataS)
 }
 
+// favPageHandler renders the user's favorite games page
 func favPageHandler(w http.ResponseWriter, r *http.Request) {
 	if !logged {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -284,6 +290,7 @@ func favPageHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "fav", dataS)
 }
 
+// categorieHandler handles requests to display games by a specific category
 func categorieHandler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("id")
 	data := fetchGameByGenres(query)
@@ -294,6 +301,7 @@ func categorieHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "categorie", dataS)
 }
 
+// categoriesHandler handles requests to display all categories
 func categoriesHandler(w http.ResponseWriter, r *http.Request) {
 	data := fetchAllGames()
 	dataS := CombinedData{

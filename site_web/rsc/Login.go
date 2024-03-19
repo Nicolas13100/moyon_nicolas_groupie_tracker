@@ -14,11 +14,12 @@ import (
 
 var (
 	users    = make(map[string]User) // Map to store users
-	username string
-	password string
-	logged   bool
+	username string                  // Variable to store username of logged in user
+	password string                  // Variable to store password of logged in user
+	logged   bool                    // Variable to track if user is logged in
 )
 
+// Handler for user registration
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	Invalid := ""
 	data := CombinedData{
@@ -28,11 +29,13 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "Register", data)
 }
 
+// Handler for confirming user registration
 func confirmRegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+	// Load users from file
 	if err := loadUsersFromFile("users.json"); err != nil {
 		fmt.Println(err)
 	}
@@ -72,6 +75,7 @@ func confirmRegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// Handler for user login
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	// Load users from a file on startup
 	if err := loadUsersFromFile("users.json"); err != nil {
@@ -97,6 +101,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "Login", data)
 }
 
+// Handler for successful user login
 func successLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
@@ -118,11 +123,13 @@ func successLoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
+// Handler for user logout
 func logoutHandler(w http.ResponseWriter, r *http.Request) {
 	ResetUserValue()
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 }
 
+// Handler for dashboard
 func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 	if !logged {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -138,6 +145,7 @@ func dashboardHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "dashboard", autoData)
 }
 
+// Handler for gestion
 func gestionHandler(w http.ResponseWriter, r *http.Request) {
 	if !logged {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -153,6 +161,7 @@ func gestionHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "gestion", data)
 }
 
+// Handler for changing login credentials
 func changeLoginHandler(w http.ResponseWriter, r *http.Request) {
 	if !logged {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -186,6 +195,7 @@ func saveUsersToFile(filename string) error {
 	return nil
 }
 
+// Function to hash password
 func hashPassword(password string) string {
 	hasher := sha256.New()
 	hasher.Write([]byte(password))
@@ -193,6 +203,7 @@ func hashPassword(password string) string {
 	return hex.EncodeToString(hashedPassword)
 }
 
+// Function to check if password matches hashed password
 func checkPasswordHash(password, hash string) bool {
 	hashedPassword := hashPassword(password)
 	return hashedPassword == hash
@@ -246,12 +257,14 @@ func loadUsersFromFile(filename string) error {
 	return nil
 }
 
+// Function to reset user values
 func ResetUserValue() {
 	logged = false
 	username = ""
 	password = ""
 }
 
+// Function to update user credentials
 func updateUserCredentials(name, oldPassword, newPassword string) error {
 	// Read the JSON file into memory
 	raw, err := os.ReadFile("users.json")
