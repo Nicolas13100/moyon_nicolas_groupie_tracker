@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="static/favPage.css">
     <script src="static/script.js"></script>
     <title>favorite</title>
 </head>
@@ -115,15 +116,22 @@
             <div class="indexTop">
                 {{if .Result}}
                 {{range .Result}}
-                <a href="/game?id={{.ID}}">
-                    <div class="game-item">
-                        <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
-                        <div class="indexTextTop">
-                            <div class="indexName">{{.Name}}</div>
-                            <div class="indexGenre">{{join .GenresString " "}}</div>
+                <div class="collumn1">
+                    <a href="/game?id={{.ID}}">
+                        <div class="game-item">
+                            <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                            <div class="indexTextTop">
+                                <div class="indexName">{{.Name}}</div>
+                                <div class="indexGenre">{{join .GenresString " "}}</div>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                    <button class="noselect">
+                        <a class="h-link" href="/fav?id={{.ID}}&fav=fav">
+                            <div class="text">Delete</div>
+                        </a>
+                    </button>
+                </div>
                 {{end}}
                 {{else}}
                 <div>No Favorite found.</div>
@@ -131,8 +139,14 @@
             </div>
         </div>
     </section>
-    <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
-        Contribution Guidelines</footer>
+    <footer><a href="https://www.twitch.tv/p/fr-fr/legal/privacy-notice/">Privacy Notice</a> - <a
+            href="https://safety.twitch.tv/s/article/Community-Guidelines?language=en_US">Community Guidelines</a> - <a
+            href="https://www.igdb.com/content-policy">Content Policy</a> -
+        <a href="https://www.twitch.tv/p/fr-fr/legal/developer-agreement/">Developer Terms</a> - <a
+            href="https://www.twitch.tv/p/en/legal/dmca-guidelines/">DMCA Guidelines</a> - <a
+            href="https://www.igdb.com/api">API</a> -
+        <a href="https://github.com/twitchtv/igdb-contribution-guidelines/wiki">Contribution Guidelines</a>
+    </footer>
 </body>
 
 </html>

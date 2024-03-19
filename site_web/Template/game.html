@@ -158,7 +158,7 @@
                     </a>
             </div>
             {{else}}
-            <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" />
+            <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox"/>
             <label class="container2" for="favorite">
                 <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
                     stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
@@ -169,8 +169,8 @@
                 </svg>
                 <a class="h-link" href="/login">
                     <div class="action">
-                        <span class="option-1">Add to Favorites</span>
-                        <span class="option-2">Remove from Favorites</span>
+                        <span class="option-1">Loggin to add to favorites</span>
+                        <span class="option-2">Loggin to add to favorites</span>
                     </div>
                 </a>
                 {{end}}
@@ -179,8 +179,14 @@
         </div>
         </div>
     </section>
-    <footer>Privacy Notice - Terms - Content Policy - Community Guidelines - Developer Terms - DMCA Guidelines - API -
-        Contribution Guidelines</footer>
+    <footer><a href="https://www.twitch.tv/p/fr-fr/legal/privacy-notice/">Privacy Notice</a> - <a
+            href="https://safety.twitch.tv/s/article/Community-Guidelines?language=en_US">Community Guidelines</a> - <a
+            href="https://www.igdb.com/content-policy">Content Policy</a> -
+        <a href="https://www.twitch.tv/p/fr-fr/legal/developer-agreement/">Developer Terms</a> - <a
+            href="https://www.twitch.tv/p/en/legal/dmca-guidelines/">DMCA Guidelines</a> - <a
+            href="https://www.igdb.com/api">API</a> -
+        <a href="https://github.com/twitchtv/igdb-contribution-guidelines/wiki">Contribution Guidelines</a>
+    </footer>
 </body>
 <script>
     var ID = `{{.Result.ID}}`;

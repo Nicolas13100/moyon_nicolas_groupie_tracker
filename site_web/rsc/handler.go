@@ -114,7 +114,12 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func favHandler(w http.ResponseWriter, r *http.Request) {
+	if !logged {
+		http.Redirect(w, r, "/login", http.StatusFound)
+		return
+	}
 	idStr := r.FormValue("id")
+	fav := r.FormValue("fav")
 	if idStr == "" {
 		fmt.Println("ID parameter is missing or empty on call to gameHandler")
 		return
@@ -131,13 +136,21 @@ func favHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = SaveUserFavorit(username, id)
+	if username != "" {
+		err = SaveUserFavorit(username, id)
+	}
+
 	if err != nil {
 		fmt.Println("Failed to save fav :", err)
 		return
 	}
-	// Redirect to /game with the ID as query parameter
-	http.Redirect(w, r, "/game?id="+idStr, http.StatusFound)
+	if fav == "fav" {
+		http.Redirect(w, r, "/favPage", http.StatusFound)
+	} else {
+		// Redirect to /game with the ID as query parameter
+		http.Redirect(w, r, "/game?id="+idStr, http.StatusFound)
+	}
+
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {

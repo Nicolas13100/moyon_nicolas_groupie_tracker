@@ -877,7 +877,30 @@ func fetchSearch(query string, page, resultsPerPage int, tags []int) ([]GameFull
 	if len(searchdata) != 0 && query == prevQuery {
 		// sort the data by tags
 		if len(tags) != 0 && tags != nil {
-			searchdata = filterByGenres(searchdata, tags)
+			searchdata1 := filterByGenres(searchdata, tags)
+
+			// Sort the data by rating
+			sort.Slice(searchdata1, func(i, j int) bool {
+				return searchdata1[i].Rating > searchdata1[j].Rating // Sorting in descending order by rating
+			})
+			// Calculate start and end indices based on page number and results per page
+			startIndex := (page - 1) * resultsPerPage
+			endIndex := page * resultsPerPage
+
+			// Ensure endIndex does not exceed the length of the data slice
+			if startIndex > len(searchdata1) {
+				startIndex = len(searchdata1) - 1
+			}
+			if endIndex > len(searchdata1) {
+				endIndex = len(searchdata1)
+			}
+
+			// Extract subset of data for the requested page
+			subset := searchdata1[startIndex:endIndex]
+
+			// Return subset of data for the requested page and total number of results
+			return subset, len(searchdata1), nil
+
 		}
 
 		// Sort the data by rating

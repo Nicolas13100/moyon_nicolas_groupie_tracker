@@ -195,7 +195,7 @@ footer {
     padding: 0;
     display: flex;
     flex-wrap: nowrap;
-    max-height: 300px;
+    max-height: fit-content;
     overflow-y: auto;
     -ms-overflow-style: none;
     /* Hide scrollbar in IE and Edge */
