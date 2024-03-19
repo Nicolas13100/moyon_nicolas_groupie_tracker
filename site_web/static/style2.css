@@ -32,7 +32,7 @@
 }
 
 #password,
-#username {
+#username,#oldpassword,#newpassword {
     display: block;
     height: 50px;
     width: 100%;

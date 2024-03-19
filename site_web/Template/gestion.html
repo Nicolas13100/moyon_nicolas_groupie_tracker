@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/style1.css">
+    <link rel="stylesheet" href="static/style2.css">
     <title>Gestion</title>
 </head>
 
@@ -108,19 +109,26 @@
                 </button> {{end}}</a>
         </nav>
     </header>
-    <section class="password">
+    <section>
+        <div class="collumn1">
+            <form action="/changeLogin" method="post" class="login">
+                <h3>Change your password</h3>
 
-        <form action="/changeLogin" method="post">
-            <label for="oldpassword">Actual Password:</label><br>
-            <input type="password" id="oldpassword" name="oldpassword" required><br><br>
-            <label for="newpassword">New password:</label><br>
-            <input type="password" id="newpassword" name="newpassword" required><br><br>
-            <button type="submit" class="transitionButton">Change Password</button>
-        </form>
-        <form action="/dashboard" method="post">
-            <button type="submit">Cancel</button>
-        </form>
+                <label for="oldpassword">Actual Password:</label>
+                <input type="password" placeholder="Present password" id="oldpassword" name="oldpassword" autofocus
+                    required>
+
+                <label for="newpassword">New password:</label>
+                <input type="password" placeholder="New password" id="newpassword" name="newpassword" required>
+
+                <button type="submit" class="button1">Change Password</button>
+            </form>
+            <form action="/dashboard" method="post" class="">
+                <button type="submit" class="button1">Cancel</button>
+            </form>
+        </div>
     </section>
+
     <footer><a href="https://www.twitch.tv/p/fr-fr/legal/privacy-notice/">Privacy Notice</a> - <a
             href="https://safety.twitch.tv/s/article/Community-Guidelines?language=en_US">Community Guidelines</a> - <a
             href="https://www.igdb.com/content-policy">Content Policy</a> -
