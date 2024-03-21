@@ -167,7 +167,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse the form data
 	err = r.ParseForm()
 	if err != nil {
-		http.Error(w, "Failed to parse form", http.StatusBadRequest)
+		fmt.Println("Failed to parse form")
 		return
 	}
 	// Get the selected tags
@@ -184,9 +184,6 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		tags = append(tags, tagInt)
 	}
-
-	// Process the selected tags
-	fmt.Printf("Selected Tags: %v\n", tags)
 
 	searchResults, totalResults, err := fetchSearch(query, page, 5, tags)
 	if err != nil {
