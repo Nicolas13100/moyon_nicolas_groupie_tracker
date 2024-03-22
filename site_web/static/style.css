@@ -406,3 +406,7 @@ iframe {
 .game h1 {
     margin-bottom: 1rem;
 }
+
+.pagination{
+    margin: 2rem;
+}

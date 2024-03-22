@@ -74,7 +74,7 @@ nav ul li {
 }
 
 .dropdown-content {
-    
+
     display: none;
     position: absolute;
     background-color: #492E87;
@@ -89,11 +89,15 @@ nav ul li {
 .dropdown-content a {
     color: #eee;
     text-decoration: none;
-    padding: 5px 0; /* Increased padding for more space */
-    margin-right: 10px; /* Added margin between links */
+    padding: 5px 0;
+    /* Increased padding for more space */
+    margin-right: 10px;
+    /* Added margin between links */
     transition: background-color 0.3s ease;
-    flex: 0 0 calc(50% - 10px); /* Adjusts width to 50% with margin included */
-    box-sizing: border-box; /* Includes padding and border in the width */
+    flex: 0 0 calc(50% - 10px);
+    /* Adjusts width to 50% with margin included */
+    box-sizing: border-box;
+    /* Includes padding and border in the width */
 }
 
 .dropdown-content a:hover {
@@ -439,16 +443,16 @@ footer {
 .input-container {
     width: 220px;
     position: relative;
-  }
-  
-  .icon {
+}
+
+.icon {
     position: absolute;
     right: 10px;
     top: calc(50% + 5px);
     transform: translateY(calc(-50% - 5px));
-  }
-  
-  .input {
+}
+
+.input {
     width: 100%;
     height: 15px;
     padding: 10px;
@@ -457,25 +461,30 @@ footer {
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
-  }
-  
-  .input:focus {
+}
+
+.input:focus {
     outline: none;
     border: 0.5px solid black;
     box-shadow: -5px -5px 0px black;
-  }
-  
-  .input-container:hover > .icon {
+}
+
+.input-container:hover>.icon {
     animation: anim 1s linear infinite;
-  }
-  
-  @keyframes anim {
+}
+
+@keyframes anim {
+
     0%,
     100% {
-      transform: translateY(calc(-50% - 5px)) scale(1);
+        transform: translateY(calc(-50% - 5px)) scale(1);
     }
-  
+
     50% {
-      transform: translateY(calc(-50% - 5px)) scale(1.1);
+        transform: translateY(calc(-50% - 5px)) scale(1.1);
     }
-  }
+}
+
+.pagination {
+    margin: 2rem;
+}
