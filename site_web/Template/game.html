@@ -112,7 +112,11 @@
     <section>
         <div class="derriere">
             <div class="abs">
+                {{if .Result.CoverLink}}
                 <div class="img-abs" style="background-image: url({{.Result.CoverLink}});"></div>
+                {{else}}
+                <div class="img-abs" style="background-image: url(static/img/Picture_Not_Yet_Available.png);"></div>
+                {{end}}
                 <div class="rating-ctn">
                     <div class="rating-texte">
                         {{if eq .Result.Rating 0.0}}
@@ -158,7 +162,7 @@
                     </a>
             </div>
             {{else}}
-            <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox"/>
+            <input value="favorite-button" name="favorite-checkbox" id="favorite" type="checkbox" />
             <label class="container2" for="favorite">
                 <svg class="feather feather-heart" stroke-linejoin="round" stroke-linecap="round" stroke-width="2"
                     stroke="currentColor" fill="none" viewBox="0 0 24 24" height="24" width="24"
