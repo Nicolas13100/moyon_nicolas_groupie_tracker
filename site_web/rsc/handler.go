@@ -172,7 +172,9 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// Get the selected tags
 	tagStrings := r.Form["tags[]"]
-
+	if len(tagStrings) != 0 {
+		page = 1
+	}
 	// Convert tag strings to integers
 	var tags []int
 	for _, tagString := range tagStrings {
