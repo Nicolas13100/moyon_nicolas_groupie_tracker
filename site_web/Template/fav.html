@@ -119,7 +119,11 @@
                 <div class="collumn1">
                     <a href="/game?id={{.ID}}">
                         <div class="game-item">
+                            {{if .CoverLink}}
                             <img src="{{.CoverLink}}" alt="{{.CoverLink}}">
+                            {{else}}
+                            <img src="static/img/Picture_Not_Yet_Available.png" alt="Picture Not Yet Available">
+                            {{end}}
                             <div class="indexTextTop">
                                 <div class="indexName">{{.Name}}</div>
                                 <div class="indexGenre">{{join .GenresString " "}}</div>
